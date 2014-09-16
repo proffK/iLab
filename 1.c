@@ -1,26 +1,30 @@
 #include <stdio.h>
 
-int main(int argc, const char* argv[]){
+float calculate(float, float, char);
+
+int main(){
 	char a = 0;
-	int  x = 0, y = 0;	
-	sscanf(argv[1], "%d", &x);
-	sscanf(argv[2], "%c", &a);
-	sscanf(argv[3], "%d", &y);
-	
-	switch (a){
-		case '+':
-		printf("%d\n", x + y);
-		break;
-		case '*':
-		printf("%d\n", x * y);
-		break;
-		case '/':
-		printf("%d\n", x / y);
-		break;
-		case '-':
-		printf("%d\n", x - y);
-		break;
-	}
-	
+	float  x = 0, y = 0;	
+	scanf ("%f %c %f", &x, &a, &y);	
+
+	printf("= %g\n", calculate(x, y, a));
 	return 0;
 }
+
+float calculate(float x, float y, char a){	
+	switch (a){
+		case '+':
+		return  x + y;
+		break;
+		case '*':
+		return x * y;
+		break;
+		case '/':
+		return x / y;
+		break;
+		case '-':
+		return x - y;
+		break;
+	}
+}
+
