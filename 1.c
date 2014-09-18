@@ -10,11 +10,18 @@ float divi(float, float);
 
 int main(){
 	char a = 0;
-	float  x = 0, y = 0;
-	printf("Input Two mumbers and operation at format:\nNUM OP NUM\n");	
-	scanf ("%f %c %f", &x, &a, &y);	
-
-	printf("= %g\n", calculate(x, y, a));
+	float  x = 0, y = 0, i = 0;
+	printf("Input numbers and operation at format:\nNUM OP NUM OP ...\n");
+	scanf ("%f", &x);	
+	while (i < 1000) {
+		scanf ("\n%c", &a);
+		if (a == '=') goto step2;
+		scanf ("%f", &y);
+		x = calculate(x, y, a);
+		++i;
+	}
+	
+  step2:printf("%g\n", x);
 	return 0;
 }
 
