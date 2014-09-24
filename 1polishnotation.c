@@ -125,21 +125,23 @@ int sgetline(char s[], int lim){
 }
 
 int elem_parsing(char str[], int length, struct elem a[]){
-	int i = 0, j = 0, s = 0;
+	int i = 0, j = 0, s = 0, flag = 0;
 	
 	for (i = 0; i <= length; ++i){
 		if (str[length - i] == ' '){
 			j = 0;
+			flag = 0;
 			s++;
 		}
-		if (str[length - i] == '+' || str[length - i] == '-' \
+		if ((str[length - i] == '+' || str[length - i] == '-' \
 			|| str[length - i] == '/' || str[length - i] == '*' \
-			|| str[length - i] == '^'){
+			|| str[length - i] == '^') && flag == 0){
 			a[s].type = -1;
 			a[s].oper = str[length - i];
 			j = 0;
 		}
-		else if ((str[length - i] <= '9' && str[length - i] >= '0') || str[length - i] == '.'){
+		else if ((str[length - i] <= '9' && str[length - i] >= '0') || str[length - i] == '.' \
+		|| (str[length - i] == '-' && flag == 1)){
 			if (str[length - i] == '.') {
 				a[s].num = a[s].num * pow(10, j * -1);
 				j = 0;
@@ -148,8 +150,12 @@ int elem_parsing(char str[], int length, struct elem a[]){
 				a[s].num += (str[length - i] - '0') * pow(10, j);
 				a[s].type = 1;
 				j++;
+				flag = 1;
 			}
-		}
+			if (str[length - i] == '-' && flag == 1){
+				a[s].num *= -1;
+			}
+		}	
 	}
 	
 	return s + 1;
