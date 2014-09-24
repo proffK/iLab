@@ -128,24 +128,31 @@ int elem_parsing(char str[], int length, struct elem a[]){
 	int i = 0, j = 0, s = 0;
 	
 	for (i = 0; i <= length; ++i){
-		if (str[length - i] == ' ') j = 0;
+		if (str[length - i] == ' '){
+			j = 0;
+			s++;
+		}
 		if (str[length - i] == '+' || str[length - i] == '-' \
 			|| str[length - i] == '/' || str[length - i] == '*' \
 			|| str[length - i] == '^'){
 			a[s].type = -1;
 			a[s].oper = str[length - i];
 			j = 0;
-			s++;
 		}
-		else if (str[length - i] <= '9' && str[length - i] >= '0'){
-			a[s].num += (str[length - i] - '0') * pow(10, j);
-			a[s].type = 1;
-			if (j == 0) s++;
-			j++;
+		else if ((str[length - i] <= '9' && str[length - i] >= '0') || str[length - i] == '.'){
+			if (str[length - i] == '.') {
+				a[s].num = a[s].num * pow(10, j * -1);
+				j = 0;
+			} 
+			if (str[length - i] <= '9' && str[length - i] >= '0'){
+				a[s].num += (str[length - i] - '0') * pow(10, j);
+				a[s].type = 1;
+				j++;
+			}
 		}
 	}
 	
-	return s;
+	return s + 1;
 }
 					
 void elem_arrayrevers(struct elem a[], int size){
