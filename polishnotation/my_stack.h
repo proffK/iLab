@@ -4,7 +4,7 @@
 /*! This struct realise stack
  * \param data - pointer of free memory
  * \param head - number of elements in stack
- * \param size - number of elements in stack
+ * \param size - max number of elements in stack
  * */
 typedef struct {
 	double* data;
@@ -12,19 +12,19 @@ typedef struct {
 	int size;
 } stack;
 
-/*! This function create stack
+/*! This function creates stack
  * \param Size - size new stack
  * \param st - uninitialization stack
  * \return pointer of st
  */ 
 stack* stack_create(int Size,stack st);
 
-/*! This function get element from stack and decrement head
- * \return hightest element
+/*! This function get top element from stack and decrement head
+ * \return top element
  */
 double pop(stack* stk);
 
-/*! This function push element from stack and increment head
+/*! This function push new element from stack and increment head
  * \return 0 - if operation complete 1 - if stack full
  */
 int push(stack* stk, double a);
@@ -52,4 +52,7 @@ void stack_clear(stack* stk);
  */
 void stack_delete(stack* stk);
 
+/*! This function read top element of stack 
+ */
+double stack_peek(stack* stk);
 #endif

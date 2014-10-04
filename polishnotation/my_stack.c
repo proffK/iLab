@@ -14,7 +14,7 @@ stack* stack_create(int Size, stack st){
 
 double pop(stack* stk){
 	if (stack_empty(stk)){
-		printf("ERROR: stek is empty");
+		printf("ERROR: stack is empty");
 		return 0;
 	}
 	(stk -> head)--;
@@ -23,7 +23,7 @@ double pop(stack* stk){
 
 int push(stack* stk, double a){
 	if (stack_full(stk)){
-		printf("ERROR: stek is full");
+		printf("ERROR: stack is full");
 		return 0;
 	}
 	*((stk -> data) + (stk -> head)) = a;
@@ -63,3 +63,7 @@ void stack_delete(stack* stk){
 	(stk -> size) = 0;
 	(stk -> head) = 0;
 }	
+
+double stack_peek(stack* stk){
+	return *((stk -> data) + (stk -> head) - 1)
+}
