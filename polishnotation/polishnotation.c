@@ -3,10 +3,18 @@
 #include <string.h>
 #include <assert.h>
 #include <math.h>
-#include "calculate.h"
 #include "my_stack.h"
+#include "calculate.h"
+
 #define MAXLINE  100
 
+/*! This function convert part of string in double
+ * \param str - input string
+ * \param start - number of first digit or sign
+ * \param target - pointer of output double
+ * \return number first non-digital character
+ */  
+double float_reader(char* str, int start, double* target);
 
 int main(){
 
