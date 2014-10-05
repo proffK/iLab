@@ -17,22 +17,21 @@
 double float_reader(char* str, int start, double* target);
 
 int main(){
-
+    
 	char buf[MAXLINE] = "";
 	double num1 = 0,num2 = 0, num = 0;
 	int i = 0;
-	
-	stack st;
-	
-	stack* stk = stack_create(MAXLINE, st);
+	stack* stk = stack_create(MAXLINE);
 	
 	fgets(buf, MAXLINE, stdin);
 
 	while(buf[i] != '\n'){
 
 		switch (buf[i]) {
-			  case '+': case '*': case '/':
+			case '+': case '*': case '/': case '^':
+			  
 				assert((stk -> head) >= 2);
+				
 				num1 = pop(stk);
 				num2 = pop(stk);
 				num = calculate(num2, num1, buf[i]);
@@ -40,7 +39,9 @@ int main(){
 				break;
 			case '-':
 				if (buf[i + 1] == ' '){
+					
 					assert((stk -> head) >= 2);
+					
 					num1 = pop(stk);
 					num2 = pop(stk);
 					num = calculate(num2, num1, buf[i]);
@@ -60,38 +61,48 @@ int main(){
 		++i;
 	}
 	
-	printf("%lg", pop(stk));
+	assert((stk -> head) >= 1);
+	
+	printf("%lg\n", pop(stk));
 	stack_delete(stk);
 	return 0;
 }
 
 double float_reader(char* str, int start, double* target){
-	int i = start, a = 0, len = 0;
-	int sign = 1;
+	int i = 0, a = 0, b = 0;
+	int sign = 1, sign_a = 1, sign_b = 0;
 	double result = 0;
 	
 	if 	(str[start] == '-') {
 		sign = -1;
 		start++;
 	}
-	
-	while(('0' <= str[i] && str[i] <= '9') || str[i] == '.') i++;
-	
-	len = i;
-	i--;
-	
-	while(('0' <= str[i] && str[i] <= '9') || str[i] == '.') {
-		if (str[i] == '.') result *= pow(10, -a);
-		
-		if (str[i] != '.'){
-			result = result + (str[i] - '0') * pow(10, a);
-		}
-		i--;
-		a++;
+	if 	(str[start] == '+') {
+		sign = 1;
+		start++;
 	}
 	
+	i = start;
+	
+	while (('0' <= str[i] && str[i] <= '9') || str[i] == '.'){
+		
+		if ('0' <= str[i] && str[i] <= '9') {
+			b += sign_b;
+			result = result * pow(10, a) + (str[i] - '0') * pow(10, b);
+			a += sign_a;	
+		}
+		
+		if (str[i] == '.') {
+			a = 0;
+			sign_a = 0;
+			sign_b = -1;
+		}
+		
+		i++;
+	}
+
 	*target = result * sign;
 	
-	return len;
+	return i;
 	
 }

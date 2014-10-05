@@ -4,10 +4,16 @@
 #include <stdio.h>
 
 	
-stack* stack_create(int Size, stack st){
-	stack* new_stack = &st;
+stack* stack_create(int Size){
+	stack* new_stack = (stack*) calloc (1, sizeof(stack*));
+	
+	assert(new_stack);
+	
 	(new_stack -> size) = Size;
 	(new_stack -> data) = (double*) calloc (Size, sizeof(double*));
+	
+	assert(new_stack -> data);
+	
 	(new_stack -> head) = 0;
 	return new_stack;
 }
@@ -65,5 +71,5 @@ void stack_delete(stack* stk){
 }	
 
 double stack_peek(stack* stk){
-	return *((stk -> data) + (stk -> head) - 1)
+	return *((stk -> data) + (stk -> head) - 1);
 }

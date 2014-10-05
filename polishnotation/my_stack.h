@@ -17,7 +17,7 @@ typedef struct {
  * \param st - uninitialization stack
  * \return pointer of st
  */ 
-stack* stack_create(int Size,stack st);
+stack* stack_create(int Size);
 
 /*! This function get top element from stack and decrement head
  * \return top element
