@@ -2,17 +2,22 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
-
+#include <errno.h>
 	
 stack* stack_create(int Size){
 	stack* new_stack = (stack*) calloc (1, sizeof(stack*));
 	
-	assert(new_stack);
-	
+	if (new_stack == 0) {
+		errno = ENOMEM;
+		perror("");
+	}
 	(new_stack -> size) = Size;
 	(new_stack -> data) = (double*) calloc (Size, sizeof(double*));
 	
-	assert(new_stack -> data);
+	if ((new_stack -> data) == 0) {
+		errno = ENOMEM;
+		perror("");
+	}
 	
 	(new_stack -> head) = 0;
 	return new_stack;
@@ -20,8 +25,9 @@ stack* stack_create(int Size){
 
 double pop(stack* stk){
 	if (stack_empty(stk)){
-		printf("ERROR: stack is empty");
-		return 0;
+		errno = EACCES;
+		fprintf(stderr, "ERROR: stack is empty");
+		return -1;
 	}
 	(stk -> head)--;
 	return (*((stk -> data) + (stk -> head)));
@@ -29,9 +35,11 @@ double pop(stack* stk){
 
 int push(stack* stk, double a){
 	if (stack_full(stk)){
-		printf("ERROR: stack is full");
-		return 0;
+		errno = EACCES;
+		fprintf(stderr, "ERROR: stack is full");
+		return -1;
 	}
+	
 	*((stk -> data) + (stk -> head)) = a;
 	(stk -> head)++;
 	return 0;
@@ -40,17 +48,29 @@ int push(stack* stk, double a){
 int stack_full(stack* stk){
 	if ((stk -> head) == (stk -> size)) 
 		return 1;
+		
 	if ((stk -> head) < (stk -> size))
 		return 0;
-	return 2;
+	
+	errno = EINVAL;
+	fprintf(stderr, "ERROR:invalid head value");
+	
+	return -1;
 }
 
 int stack_empty(stack* stk){
 		if ((stk -> head) == 0) 
 		return 1;
-	if ((stk -> head) > 0)
+		
+	if ((stk -> head) > 0) {
 		return 0;
-	return 2;
+		
+		errno = EINVAL;
+		fprintf(stderr, "ERROR:invalid head value");
+		
+	}
+	
+	return -1;
 }
 
 long stack_head(stack* stk){
@@ -64,6 +84,12 @@ void stack_clear(stack* stk){
 }	
 	
 void stack_delete(stack* stk){
+	
+	if (stk -> data){
+		errno = EINVAL;
+		perror("");
+	}
+	
 	free(stk -> data);
 	(stk -> data) = NULL;
 	(stk -> size) = 0;
