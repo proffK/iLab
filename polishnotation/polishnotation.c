@@ -18,11 +18,13 @@
 double float_reader(char* str, int start, double* target);
 
 int main(){
-    
-	char buf[MAXLINE] = "";
+	
+    char buf[MAXLINE] = "";
 	double num1 = 0,num2 = 0, num = 0;
 	int i = 0;
 	stack* stk = stack_create(MAXLINE);
+	
+	freopen("log.txt", "r+w", stderr);
 	
 	fgets(buf, MAXLINE, stdin);
 
@@ -31,7 +33,7 @@ int main(){
 		switch (buf[i]) {
 			case '+': case '*': case '/': case '^':
 			  
-				assert((stk -> head) >= 2);
+				assert(stack_head(stk) >= 1);
 				
 				num1 = pop(stk);
 				num2 = pop(stk);
@@ -41,7 +43,7 @@ int main(){
 			case '-':
 				if (buf[i + 1] == ' '){
 					
-					assert((stk -> head) >= 2);
+					assert(stack_head(stk) >= 1);
 					
 					num1 = pop(stk);
 					num2 = pop(stk);
@@ -62,9 +64,9 @@ int main(){
 		++i;
 	}
 	
-	if ((stk -> head) != 1){
+	if (stack_head(stk) != 0){
 	errno = EINVAL;
-	perror("Incorrect input expression");
+	perror("Incorrect input expression\n");
 	abort();
 	}
 		

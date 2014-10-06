@@ -32,13 +32,13 @@ int push(stack* stk, double a);
 /*! This function check stack 
  * \return 0 if stack not full, 1 - if stack full
  */
-int stack_full(stack* stk);
+int stack_is_full(stack* stk);
 
 
 /*! This function check stack 
  * \return 0 if stack not empty, 1 - if stack empty
  */
-int stack_empty(stack* stk);
+int stack_is_empty(stack* stk);
 
 /*! This function return head of stack
  */
@@ -55,4 +55,7 @@ void stack_delete(stack* stk);
 /*! This function read top element of stack 
  */
 double stack_peek(stack* stk);
+
+int stack_is_valide(stack* stk);
 #endif
+
