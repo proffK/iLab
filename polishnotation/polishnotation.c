@@ -5,6 +5,7 @@
 #include <math.h>
 #include "my_stack.h"
 #include "calculate.h"
+#include "errno.h"
 
 #define MAXLINE  100
 
@@ -61,8 +62,12 @@ int main(){
 		++i;
 	}
 	
-	assert((stk -> head) >= 1);
-	
+	if ((stk -> head) != 1){
+	errno = EINVAL;
+	perror("Incorrect input expression");
+	abort();
+	}
+		
 	printf("%lg\n", pop(stk));
 	stack_delete(stk);
 	return 0;
@@ -83,7 +88,7 @@ double float_reader(char* str, int start, double* target){
 	}
 	
 	i = start;
-	
+
 	while (('0' <= str[i] && str[i] <= '9') || str[i] == '.'){
 		
 		if ('0' <= str[i] && str[i] <= '9') {
