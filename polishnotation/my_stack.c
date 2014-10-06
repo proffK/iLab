@@ -7,7 +7,7 @@
 stack* stack_create(int Size){
 	stack* new_stack = (stack*) calloc (1, sizeof(stack*));
 	
-	if (new_stack == 0) {
+	if (new_stack == 0) {///NULL
 		
 		errno = ENOMEM;
 		perror("Error in function stack_create: no memory for stack\n");
@@ -19,14 +19,23 @@ stack* stack_create(int Size){
 	(new_stack -> data) = (double*) calloc (Size, sizeof(double*));
 	
 	if ((new_stack -> data) == 0) {
+<<<<<<< HEAD
 		
 		errno = ENOMEM;
 		perror("Error in function stack_create: no memory for data of stack\n");
+=======
+		errno = ENOMEM;//correct
+		perror("Error in function stack_create: no memory for stacks data");
+>>>>>>> 329b8f4b04c8383386411065ca1317bd06e3a406
 		abort();
 	
 	}
 	
+<<<<<<< HEAD
 	(new_stack -> head) = -1;
+=======
+	(new_stack -> head) = 0;//-1
+>>>>>>> 329b8f4b04c8383386411065ca1317bd06e3a406
 	return new_stack;
 }
 
@@ -37,6 +46,7 @@ double pop(stack* stk){
 	if (stack_is_empty(stk)){
 		
 		errno = EACCES;
+<<<<<<< HEAD
 		perror("ERROR: stack is empty\n");
 		return -1;
 		
@@ -44,6 +54,14 @@ double pop(stack* stk){
 	
 	(stk -> head)--;
 	return ((stk -> data)[stk -> head + 1]);
+=======
+		fprintf(stderr, "ERROR: stack is empty");//!!!!
+		return -1;
+		
+	}
+	(stk -> head)--;//!!!
+	return (*((stk -> data) + (stk -> head)));//!!!
+>>>>>>> 329b8f4b04c8383386411065ca1317bd06e3a406
 }
 
 int push(stack* stk, double a){
