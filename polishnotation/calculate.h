@@ -7,3 +7,5 @@ float sub(float, float);
 float mul(float, float);
 
 float divi(float, float);
+
+float logarithm(float, float);

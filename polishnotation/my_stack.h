@@ -46,16 +46,26 @@ long stack_head(stack* stk);
 
 /*! This function clear stack
  */
-void stack_clear(stack* stk);
+int stack_clear(stack* stk);
 
 /*! This function delete stack and free memory
  */
-void stack_delete(stack* stk);
+int stack_delete(stack* stk);
 
 /*! This function read top element of stack 
  */
 double stack_peek(stack* stk);
 
+/*! This function chek stack
+ * \return 1 if stack valide, 0 if stack invalide
+ */
 int stack_is_valide(stack* stk);
+
+/*! This function change stack size, but save all elements
+ * \param stk - changing stack
+ * \param new_size - new size stack
+ * \return number of copied element, 0 if operation impossible.
+ */
+stack* stack_expansion(stack* stk, int new_size);
 #endif
 

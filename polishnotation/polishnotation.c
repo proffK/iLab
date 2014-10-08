@@ -24,14 +24,16 @@ int main(){
 	int i = 0;
 	stack* stk = stack_create(MAXLINE);
 	
-	freopen("log.txt", "r+w", stderr);
+	freopen("log.txt", "w+", stderr);
+	
+	fprintf(stderr, "No problem"); //clean log file
 	
 	fgets(buf, MAXLINE, stdin);
 
 	while(buf[i] != '\n'){
 
 		switch (buf[i]) {
-			case '+': case '*': case '/': case '^':
+			case '+': case '*': case '/': case '^': case 'l':
 			  
 				assert(stack_head(stk) >= 1);
 				

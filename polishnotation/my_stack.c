@@ -1,7 +1,7 @@
+#include <stdio.h>
 #include "my_stack.h"
 #include <stdlib.h>
 #include <assert.h>
-#include <stdio.h>
 #include <errno.h>
 	
 stack* stack_create(int Size){
@@ -31,51 +31,57 @@ stack* stack_create(int Size){
 }
 
 double pop(stack* stk){
+ 
+	if (stack_is_valide(stk)) {
 	
-	assert(stack_is_valide(stk));
+		if (stack_is_empty(stk)) { 
+		
+			errno = EACCES;
+			perror("ERROR: stack is empty\n");
+			return -2;
+		
+		}
 	
-	if (stack_is_empty(stk)){
-		
-		errno = EACCES;
-		perror("ERROR: stack is empty\n");
-		return -1;
-		
+		(stk -> head)--;
+		return ((stk -> data)[stk -> head + 1]);
 	}
-	
-	(stk -> head)--;
-	return ((stk -> data)[stk -> head + 1]);
+	return -1;
 }
 
 int push(stack* stk, double a){
+
+	if (stack_is_valide(stk)) {
 	
-	assert(stack_is_valide(stk));
+		if (stack_is_full(stk)){
+		
+			errno = EACCES;
+			perror("ERROR: stack is full\n");
+			return -2;
+		
+		}
 	
-	if (stack_is_full(stk)){
-		
-		errno = EACCES;
-		perror("ERROR: stack is full\n");
-		return -1;
-		
+		(stk -> data)[stk -> head + 1] = a;
+		(stk -> head)++;
+		return 0;
 	}
-	
-	(stk -> data)[stk -> head + 1] = a;
-	(stk -> head)++;
-	return 0;
+	return -1;
 }
 
-int stack_is_full(stack* stk){
+int stack_is_full(stack* stk) {
 	
-	assert(stack_is_valide(stk));
+	if (stack_is_valide(stk)) {
 	
-	if ((stk -> head + 2) == (stk -> size))
-		return 1;
+		if ((stk -> head + 1) == (stk -> size))
+			return 1;
 		
-	return 0;
+		return 0;
+	}
+	return -1;
 }
 
-int stack_is_empty(stack* stk){
+int stack_is_empty(stack* stk) {
 	
-	assert(stack_is_valide(stk));
+	stack_is_valide(stk);
 	
 	if ((stk -> head) == -1) 
 		return 1;
@@ -85,40 +91,89 @@ int stack_is_empty(stack* stk){
 
 long stack_head(stack* stk){
 	
-	assert(stack_is_valide(stk));
-	
-	return (stk -> head);
-
+	if (stack_is_valide(stk)){
+		return (stk -> head);
+	}
+	return -99;
 }
 
-void stack_clear(stack* stk){
+int stack_clear(stack* stk){
 	
-	assert(stack_is_valide(stk));
+	if (stack_is_valide(stk)) {
 	
-	do	
-		*((stk -> data) + (stk -> head)) = 0;
-	while (-1 == --(stk -> head));
+		do	
+			*((stk -> data) + (stk -> head)) = 0;
+		while (--(stk -> head) + 1);
+	
+		return 0;
+	}
+	return -1;
 }	
 	
-void stack_delete(stack* stk){
+int stack_delete(stack* stk){
 	
-	assert(stack_is_valide(stk));
+	if (stack_is_valide(stk)) {
 	
-	free(stk -> data);
-	(stk -> data) = NULL;
-	(stk -> size) = 0;
-	(stk -> head) = 0;
+		free(stk -> data);
+		(stk -> data) = NULL;
+		(stk -> size) = -666;
+		(stk -> head) = -99;
+		return 0;
+	}
+	return -1;
 }	
 
 double stack_peek(stack* stk){
 	
-	assert(stack_is_valide(stk));
+	if (stack_is_valide(stk)) {
 	
-	return *((stk -> data) + (stk -> head) - 1);
+		return (stk -> data)[stk -> head];
+	}
+	return -1;
+}
 
+stack* stack_expansion(stack* stk, int new_size){
+	double* buf = NULL;
+	int i = 0;	
+	stack* new_stack = stack_create(new_size);
+	buf = (double*) calloc (stk -> size, sizeof(double*));
+		
+	if (stack_is_valide(stk)) {
+		if (buf) { 
+		
+			for (i = 0; i <= stk -> head; ++i) {
+				buf[i] = stk -> data[i];
+			}
+			
+			stack_delete(stk);
+			
+			i--;
+			
+			new_stack -> head = i;
+ 
+			if (new_stack -> head + 1) do new_stack -> data[i] = buf[i]; while (--i + 1);
+			
+			free(buf);
+			buf = NULL;
+			
+			return new_stack;
+		}
+		
+		errno = ENOMEM;
+		perror("Error in function stack_expansion: no memory for stack\n");
+		return stk;		
+	}
+		
+	return 0;		
 }
 
 int stack_is_valide(stack* stk){
+	
+	if (stk == NULL) {
+		errno = EINVAL;
+		perror("stack not exist\n");
+		return 0;
+	}
 
 	if (!(stk -> size - 1 >= stk -> head && stk -> head >= -1)){
 		errno = EINVAL;
@@ -130,7 +185,7 @@ int stack_is_valide(stack* stk){
 		
 		errno = EINVAL;
 		perror("invalide data adres\n");
-		return 0;
+		abort();
 	}
 	
 	return 1;
