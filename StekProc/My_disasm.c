@@ -3,7 +3,6 @@
 #include <string.h>
 #include "commands.h"
 #include "resourses.h"
-#include "registors.h"
 #include <assert.h>
 
 int disasm(FILE* sourse, double* buffer, int buffer_size);
