@@ -19,6 +19,14 @@ int main(int argc, char* argv[]){
 
 	assert(firmware);
 	
+	if (argc == 0) {
+		
+		processor_delete(proc);
+		free(firmware);
+		printf("No input file\n");
+		return 0;
+	}
+	
 	firmware_file = fopen(argv[1], "rb");
 	
 	fread(sign, sizeof(char), 2, firmware_file);
