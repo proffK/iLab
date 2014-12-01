@@ -1,1 +1,3 @@
-No problem
+No problemERROR: divide by zero
+: Invalid argument
+stack: calculate.c:53: Div: Assertion `"dil 0" == 0' failed.

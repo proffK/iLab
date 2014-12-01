@@ -31,6 +31,7 @@ int main(int argc, char* argv[]){
 	
 	fread(sign, sizeof(char), 2, firmware_file);
 	
+	
 	if (sign[0] != 'k' || sign[1] != 'k') {
 		processor_delete(proc);
 		free(firmware);
@@ -45,6 +46,9 @@ int main(int argc, char* argv[]){
 	processor_start(proc, stdin, stdout);
 
 	processor_delete(proc);
+
+
+	fclose(firmware_file);
 
 	free(firmware);
 	return 0;

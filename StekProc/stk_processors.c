@@ -59,6 +59,7 @@ int processor_delete(processor* proc){
 		proc -> regs = NULL;
 		stack_delete(proc -> stk);
 		proc -> n_reg = -1;
+		free(proc);
 		
 	return 0;
 	

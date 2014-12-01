@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <math.h>
-#include "my_stack.h"
+#include "m_stack.h"
 #include "calculate.h"
 #include "errno.h"
 
@@ -62,6 +62,9 @@ int main(){
 				i = float_reader(buf, i, &num);
 				push(stk, num);
 				break;
+			default:
+			printf("incorrect operation");
+			abort();
 		}
 		++i;
 	}
@@ -71,7 +74,11 @@ int main(){
 	perror("Incorrect input expression\n");
 	abort();
 	}
-		
+	
+	if (errno != 0){
+		printf("program failed");
+		abort();
+	}
 	printf("%lg\n", pop(stk));
 	stack_delete(stk);
 	return 0;

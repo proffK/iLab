@@ -1,11 +1,25 @@
-float calculate( float , float , char );
+#ifndef my_stack
+#define my_stack
 
-float add(float, float);
+/*!
+ * List operation:
+ * "+" - add
+ * "-" - sub
+ * "/" - Div
+ * "*" - mul
+ * "^" - pow
+ * "l" - logarithm
+ */
+double calculate(double a, double b, char operation);
 
-float sub(float, float);
+double add(double a, double b);
 
-float mul(float, float);
+double sub(double a, double b);
 
-float divi(float, float);
+double mul(double a, double b);
 
-float logarithm(float, float);
+double Div(double a, double b);
+
+double logarithm(double a, double b);
+
+#endif

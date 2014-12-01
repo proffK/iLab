@@ -1,65 +1,64 @@
-#ifndef my_stack
-#define my_stack
-
 #include <stdio.h>
 #include "calculate.h"
 #include <math.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <assert.h>
 	
-float calculate(float x, float y, char a){	
-	switch (a){
+double calculate(double a, double b, char operation){	
+	switch (operation){
 		case '+':
-		return add(x, y);
+		return add(a, b);
 		break;
 		case '*':
-		return mul(x, y);
+		return mul(a, b);
 		break;
 		case '/':
-		return divi(x, y);
+		return Div(a, b);
 		break;
 		case '-':
-		return sub(x, y);
+		return sub(a, b);
 		break;
 		case '^':
-		return pow(x, y);
+		return pow(a, b);
 		break;
 		case 'l':
-		return logarithm(x, y);
+		return logarithm(a, b);
 		break;
+		
+		default:
+		errno = EINVAL;
+		return -1;
 	}
 	return 0;
 }
 
-float add(float a, float b){
+double add(double a, double b){
 	return a + b;
 }
 
-float sub(float a, float b){
-        return a - b;
+double sub(double a, double b){
+    return a - b;
 }
 
-float mul(float a, float b){
-        return a * b;
+double mul(double a, double b){
+    return a * b;
 }
 
-float divi(float a, float b){
+double Div(double a, double b){
 	if (b == 0) {
 		errno = EINVAL;
-		perror("ERROR: divide by zero\n");
-		return 0;
+		assert ("dil 0" == 0);
 	}
 	
         return a / b;
 } 
 
-float logarithm(float a, float b){
+double logarithm(double a, double b){
 	if (a <= 0 || b <= 0 || b == 1) {
 		errno = EINVAL;
-		perror("ERROR: invalid arg in logarithm\n");
 		return 0;
 	}
 
 	return (log(a) / log(b));
 }
-#endif
