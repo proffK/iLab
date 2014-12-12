@@ -1,0 +1,26 @@
+push 10
+pop r1
+:100
+push r1
+push 0
+jnb 101
+push r1
+push 0
+jnb 102
+push r1
+push 1
+sub
+pop r1
+push r1
+call 73
+out
+:102
+jp 100
+:101
+
+jp 1
+:73
+ret
+:67
+ret
+:1
