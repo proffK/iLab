@@ -1,0 +1,15 @@
+#!/bin/bash
+
+./mylc $1 temp.kasm
+
+mv temp.kasm ./StekProc
+
+cd ./StekProc
+
+./My_asm temp.kasm temp
+
+./KKvirtmach temp.kvm
+
+#rm temp.kasm
+
+rm temp.kvm

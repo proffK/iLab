@@ -22,10 +22,10 @@ int syntax_analize(token* source, char* out_file_name){
 	
 	parse_tree = node_new();
 
-	parse_tree = get_statement();
+	parse_tree = get_program();
 
 	block_semantic_analize(out_asm, parse_tree);
-	//node_dump2(parse_tree, out_asm);
+	//node_dump2(parse_tree, stdout);
 
 	if (cur_tok -> type != END_PROGRAM){
 
@@ -40,7 +40,7 @@ int syntax_analize(token* source, char* out_file_name){
 
 }
 
-node* get_statement(void){
+node* get_program(void){
 	
 	node* nd = node_new();
 	
@@ -49,28 +49,47 @@ node* get_statement(void){
 		nd -> data = cur_tok;
 		++cur_tok;
 		
-		nd -> left = get_statement();
-		
 	}
-
-	nd -> right = get_while();
-
-
-	if (cur_tok -> type == END_STATEMENT){
-		
-		++cur_tok;
-		nd -> left = get_statement();
-
-	}
+	
+	nd -> left = get_statement();
 	
 	if (cur_tok -> type == END_BLOCK){
 		
 		++cur_tok;
-		//nd -> left = get_statement();
+		
+	}
+	
+	return nd;	
+}
+
+node* get_statement(void){
+	
+	node* nd = node_new();
+	
+	if (cur_tok -> type == BEGIN_BLOCK){
+		
+		nd -> right = get_program();
+
+		return nd;
+		
+	}
+	
+	nd -> right = get_while();
+	
+	if (cur_tok -> type == END_STATEMENT){
+		
+		++cur_tok;
 
 	}
+	
+	if (cur_tok -> type != END_BLOCK){
+	
+		nd -> left = get_statement();
+		
+	}
+	
+	return nd;
 
-	return nd;	
 }
 
 node* get_while(void){
@@ -82,10 +101,11 @@ node* get_while(void){
 		nd -> data = cur_tok;
 		cur_tok += 2;
 		nd -> left = get_comp();
-
+	
 		if (cur_tok -> type == BRACE){
 			
 			++cur_tok;
+			token_dump(stdout, cur_tok);
 			nd -> right = get_statement();
 			
 		}
@@ -155,7 +175,7 @@ node* get_function(void){
 	nd -> data = cur_tok;
 	++cur_tok;
 	
-	nd -> right = get_expression();
+	nd -> right = get_asg();
 
 	return nd;
 	
@@ -166,6 +186,11 @@ node* get_asg(void){
 	node* nd = node_new();
 	
 	nd -> data = cur_tok;
+	if (nd -> data -> type == VAR){
+		
+		nd -> data -> type = ASSIGN;
+		
+	}
 	++cur_tok;
 
 	nd -> left = get_expression();
@@ -209,7 +234,7 @@ node* get_1pr(void){
 
 	node* nd = node_new();
 
-	nd -> left = get_paren();
+	nd -> left = get_0pr();
 
 	if (cur_tok -> type == OPERATOR &&\
 	       (cur_tok -> val == '*' || cur_tok -> val == '/')){
@@ -217,6 +242,26 @@ node* get_1pr(void){
 		nd -> data = cur_tok;
 		++cur_tok;
 		nd -> right = get_1pr();
+
+	}
+
+	return nd;
+
+}
+
+node* get_0pr(void){
+	
+	node* nd = node_new();
+
+	nd -> left = get_paren();
+
+	if (cur_tok -> type == OPERATOR &&\
+	       (cur_tok -> val == 's' || cur_tok -> val == 'c'\
+	        || cur_tok -> val == '^')){
+
+		nd -> data = cur_tok;
+		++cur_tok;
+		nd -> right = get_0pr();
 
 	}
 

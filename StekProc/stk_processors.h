@@ -30,6 +30,12 @@ int P_mul(processor* proc);
 
 int P_div(processor* proc);
 
+int P_sin(processor* proc);
+
+int P_cos(processor* proc);
+
+int P_pow(processor* proc);
+
 int P_pop(processor* proc, int reg);
 
 int P_push(processor* proc, int reg);

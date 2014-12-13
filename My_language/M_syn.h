@@ -1,8 +1,8 @@
 /*!
  * Grammatik:
  * GO ::= program;
- * program ::= {statement} | "{" program "}"
- * statement ::= while
+ * program ::= {statement} 
+ * statement ::= while | "{" program "}"
  * while ::= "<?>" (comparation) "{" program "}" | if 
  * if ::= "!?!" (comparation) "{" program "}" | function ";"
  * comporation ::= {expression} [<>=] {expression}
@@ -51,6 +51,8 @@ node* get_operator(void);
 node* get_2pr(void);
 
 node* get_1pr(void);
+
+node* get_0pr(void);
 
 node* get_term(void);
 

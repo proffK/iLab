@@ -1,0 +1,15 @@
+CC=gcc
+CCFLAGS=-Wall
+CLEAN=rm -f *.o 
+PROGRAM_NAME=akinator
+$(PROGRAM_NAME): akinator.o libtree.a
+	$(CC) $(CCFLAGS) $^ -o $@ -L. -ltree
+akinator.o: akinator.c 
+	$(CC) $(CCFLAGS) -c $^
+libtree.a: M_tree.o
+	ar rcs $@ $^
+M_tree.o: M_tree.c
+	$(CC) $(CCFLAGS) -c $^
+clean:
+	$(CLEAN)
+	rm $(PROGRAM_NAME)

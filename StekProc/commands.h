@@ -22,6 +22,9 @@ enum commands{
 	OUTC = 17,
 	INPC = 18,
 	SQRT = 19,
-	JP = 20
+	JP = 20,
+	SIN = 21,
+	COS = 22,
+	POW = 23
 	};
 #endif

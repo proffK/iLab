@@ -1,6 +1,14 @@
 
 jp 1
+:105
+pop r0
+inp
+push r0
+ret
 :73
+pop r0
+out
+push r0
 ret
 :67
 ret

@@ -36,28 +36,14 @@ int semantic_analize(FILE* out, node* tree){
 		fprintf(out, ":%lg\n", tree -> data -> val);
 		
 	}
-	
-	if (tree -> data != NULL && tree -> data -> type == FUNCTION){
 
-		if (tree -> left -> left -> left -> data -> type == STREAM){
-			
-			if (tree -> data -> val == 'I'){
-					   
-					fprintf(out, "inp\n");	
-					node_dtor(tree -> left);
-					tree -> left = NULL;
-			}
-			
-			if (tree -> data -> val == 'C'){
-					   
-					fprintf(out, "inpc\n");	
-					node_dtor(tree -> left);
-					tree -> left = NULL;
-			}
+	if (tree -> data != NULL && tree -> data -> type == BEGIN_BLOCK){
 		
-		}
-
+		block_semantic_analize(out, tree);
+		return 0;
+		
 	}
+
 
 	if (tree -> left != NULL){ 
 		
@@ -81,34 +67,9 @@ int semantic_analize(FILE* out, node* tree){
 
 		fprintf(out, "call %lg\n", tree -> data -> val);
 		
-		if (tree -> right -> left -> left -> data -> type == VAR){
-					   
-			fprintf(out, "pop r%lg\n", tree -> right -> left -> left ->\
-			       data -> val - 'a' + 1);	
-			node_dtor(tree -> right);
-			tree -> right = NULL;
-		
-		}
-		
-		else if (tree -> right -> left -> left -> data -> type == STREAM){
-			
-			if (tree -> data -> val == 'I'){
-					   
-					fprintf(out, "out\n");	
-					node_dtor(tree -> right);
-					tree -> right = NULL;
-			}
-			
-			if (tree -> data -> val == 'C'){
-					   
-					fprintf(out, "outc\n");	
-					node_dtor(tree -> right);
-					tree -> right = NULL;
-			}
 		
 		}
 
-	}
 
 
 	if (tree -> right != NULL){ 
@@ -143,7 +104,7 @@ int semantic_analize(FILE* out, node* tree){
 					case '*':
 						fprintf(out, "mul\n");
 						break;
-					/*case '^':
+					case '^':
 						fprintf(out, "pow\n");
 						break;
 					case 's':
@@ -152,7 +113,6 @@ int semantic_analize(FILE* out, node* tree){
 						case 'c':
 						fprintf(out, "cos\n");
 						break;
-					*/
 					default:
 					       break;
 				}

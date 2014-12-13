@@ -90,7 +90,7 @@ int P_sub(processor* proc){
 		double a = 0, b = 0;
 		a = pop(proc -> stk);
 		b = pop(proc -> stk);
-		push(proc -> stk, a - b);
+		push(proc -> stk, b - a);
 	
 		if (processor_is_valide(proc)) return 0;
 	}	
@@ -113,6 +113,55 @@ int P_mul(processor* proc){
 	return -1;
 }
 
+int P_sin(processor* proc){
+	
+	if (processor_is_valide(proc)) {
+		
+		double a = 0;
+		a = pop(proc -> stk);
+		push(proc -> stk, sin(a));
+	
+		if (processor_is_valide(proc)) return 0;
+	}	
+	
+	return -1;
+}
+
+int P_cos(processor* proc){
+	
+	if (processor_is_valide(proc)) {
+		
+		double a = 0;
+		a = pop(proc -> stk);
+		push(proc -> stk, cos(a));
+	
+		if (processor_is_valide(proc)) return 0;
+	}	
+	
+	return -1;
+}
+
+int P_pow(processor* proc){
+	
+	if (processor_is_valide(proc)) {
+		
+		double a = 0, b = 0;
+		a = pop(proc -> stk);
+		b = pop(proc -> stk);
+		
+		if (a < 0 && b < 0){
+			proc_errno = ARIF_ERR;
+			processor_dump(ARIF_ERR, proc);
+			return -1;
+		}
+		push(proc -> stk,pow(b, a));
+	
+		if (processor_is_valide(proc)) return 0;
+	}	
+	
+	return -1;
+}
+
 int P_div(processor* proc){
 	
 	if (processor_is_valide(proc)) {
@@ -126,7 +175,7 @@ int P_div(processor* proc){
 			processor_dump(ARIF_ERR, proc);
 			return -1;
 		}
-		push(proc -> stk, a / b);
+		push(proc -> stk, b / a);
 	
 		if (processor_is_valide(proc)) return 0;
 	}	
@@ -419,6 +468,18 @@ int processor_start(processor* proc, FILE* input_stream, FILE* output_stream){
 					case JP:
 						++proc -> counter;
 						proc -> counter = proc -> data[proc -> counter];
+						break;
+					case SIN:
+						P_sin(proc);
+						++proc -> counter;
+						break;
+					case COS:
+						P_cos(proc);
+						++proc -> counter;
+						break;
+					case POW:
+						P_pow(proc);
+						++proc -> counter;
 						break;
 					default:
 						return -1;

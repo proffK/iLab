@@ -1,7 +1,7 @@
 #ifndef M_SYN
 #define M_SYN
-
-/*?
+#include "M_tree.h"
+/*
  * G0 ::= E
  * E ::= T {"+" "-", T}*
  * T ::= P{"*" "/", P}*
@@ -9,14 +9,14 @@
  * N ::= [0-9]+
 */
 
-int get_G0(char* input_string);
+node* get_G0(char* input_string);
 
-int get_E();
+node* get_E();
 
-int get_T();
+node* get_T();
 
-int get_P();
+node* get_P();
 
-int get_N();
+node* get_N();
 
 #endif

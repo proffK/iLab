@@ -4,8 +4,8 @@
 char* cur_c = NULL;
 int syntax_errno = 0;
 
-int get_G0(char* input_string){
-	int val = 0;
+node* get_G0(char* input_string){
+	node* val = node_new();
 	cur_c = input_string;
 	val = get_E();
 	
@@ -14,57 +14,56 @@ int get_G0(char* input_string){
 	return val;
 }	
 
-int get_E(){
-	int val = 0;
+node* get_E(){
 
+	node* val = node_new();
 	val = get_T();
 
-		//printf("%s\n", cur_c);
-
-	while (*cur_c == '+' || *cur_c == '-'){
-		char op = *cur_c;
-
-		++cur_c;
-
-		if (syntax_errno) return 0;
-
-		if (op == '+')
-			val += get_T();
-		if (op == '-')
-			val -= get_T();
-
-	}
-
-	return val;
-
-}
-
-
-int get_T(){
-	int val = 0;
-
-	val = get_P();
-
-	while (*cur_c == '*' || *cur_c == '/'){
-		char op = *cur_c;
+	if (syntax_errno) return 0;
+	
+	if (*cur_c == '+' || *cur_c == '-'){
+		
+		node* operation = node_new();
+		operation -> data = *cur_c;
 		
 		++cur_c;
-
-		if (syntax_errno) return 0;
-
-		if (op == '*')
-			val *= get_P();
-		if (op == '/')
-			val /= get_P();
-
+		
+		operation -> left = val;
+		operation -> right = get_E();
+		
+		return operation;
 	}
 
 	return val;
 
 }
 
-int get_P(){
-	int val = 0;
+node* get_T(){
+
+	node* val = node_new();
+	val = get_P();
+
+	if (syntax_errno) return 0;
+	
+	if (*cur_c == '*' || *cur_c == '/'){
+		
+		node* operation = node_new();
+		operation -> data = *cur_c;
+		
+		++cur_c;
+		
+		operation -> left = val;
+		operation -> right = get_T();
+		
+		return operation;
+	}
+
+	return val;
+
+}
+
+node* get_P(){
+	node* val = node_new();
 
 	if (syntax_errno) return 0;
 
@@ -92,8 +91,8 @@ int get_P(){
 
 }
 	
-int get_N(){
-	int val = 0;
+node* get_N(){
+	node* val = NULL;
 
 	if (!('0' <=  *cur_c  &&  *cur_c <= '9')){
 		
@@ -101,10 +100,12 @@ int get_N(){
 		return 0;
 
 	}
+
+	val = node_new();
 	
 	while ('0' <=  *cur_c  &&  *cur_c <= '9'){
 		
-		val = val*10 + *cur_c++ - '0';
+		val -> data = (val -> data)*10 + *cur_c++ - '0';
 
 	}
 //	printf("\n  %d %s\n", val, cur_c);

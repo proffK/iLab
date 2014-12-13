@@ -1,0 +1,5 @@
+afirmetical error
+processor pointer = 0x13f7010 
+stack pointer = 0x13f8f90 data pointer = 0x13f7040			
+processor registors pointer = 0x13faf00
+ processor counter = 658

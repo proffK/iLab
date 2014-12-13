@@ -58,10 +58,7 @@ token* lexical_analize(FILE* inp){
 				break;
 			case '-':
 
-				if (*(cur_char + 1) == '[' &&\
-	                           (*(cur_char + 2) == 'I' || *(cur_char + 2) == 'C'\
-				   || ('0'  <= *(cur_char + 2) &&  *(cur_char + 2)\
-					   <= '9')) && *(cur_char + 3) == ']'\
+				if (*(cur_char + 1) == '[' && *(cur_char + 3) == ']'\
 				   && *(cur_char + 4) == '-'\
 				   && *(cur_char + 5) == '>') {
 
@@ -98,6 +95,15 @@ token* lexical_analize(FILE* inp){
 
 				cur_token -> type = OPERATOR;
 				cur_token -> val = '/';
+
+				++cur_char;
+				++cur_token;
+
+				break;
+			case '^':
+
+				cur_token -> type = OPERATOR;
+				cur_token -> val = '^';
 
 				++cur_char;
 				++cur_token;
@@ -194,6 +200,28 @@ token* lexical_analize(FILE* inp){
 				
 				}
 				break;
+			case 's':
+				if (*(cur_char + 1) == 'i' &&
+				    *(cur_char + 2) == 'n'){
+					
+					cur_token -> type = OPERATOR;
+					cur_token -> val = 's';
+
+					cur_char += 3;
+					++cur_token;
+				}
+				break;
+			case 'c':
+				if (*(cur_char + 1) == 'o' &&
+				    *(cur_char + 2) == 's'){
+					
+					cur_token -> type = OPERATOR;
+					cur_token -> val = 'c';
+
+					cur_char += 3;
+					++cur_token;
+				}
+				break;				
 			case '>':	
 
 				cur_token -> type = COMPARATION;
@@ -310,6 +338,12 @@ int token_dump(FILE* out, token* token){
 	}
 	if (token -> type == END_STATEMENT){
 		fprintf(out, "END_STATEMENT:%lg\n", token -> val);
+	}
+	if (token -> type == END_BLOCK){
+		fprintf(out, "END_BLOCK:%lg\n", token -> val);
+	}
+	if (token -> type == BEGIN_BLOCK){
+		fprintf(out, "BEGIN_BLOCK:%lg\n", token -> val);
 	}
 	if (token -> type == FUNCTION){
 		fprintf(out, "FUNCTION:%lg\n", token -> val);

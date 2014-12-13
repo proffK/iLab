@@ -1,0 +1,1 @@
+POP: Operation tryied to pop from empty stack

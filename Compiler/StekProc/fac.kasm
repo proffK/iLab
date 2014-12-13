@@ -1,0 +1,39 @@
+inp
+pop r1
+push r1
+out
+/Входное число
+push 1
+pop r0
+call 1
+push r0
+/Кладу в стек строку " ! = "
+. ! = 
+/Вывожу из стека 4 символа
+outc 4
+out
+push 10
+outc 1
+
+/Область функций
+jp 11
+/Результат в r0
+:1
+push r1
+push 1
+je 3
+push r1
+push r0
+mul
+
+pop r0
+push r1
+push -1
+add
+/Декрементирование
+pop r1
+call 1
+:3
+ret
+/Конец области функций
+:11

@@ -14,10 +14,6 @@ libstack.a: m_stack.o
 	ar rcs $@ $<
 mystack.o: m_stack.c
 	$(CC) $(CCFLAGS) -c $<
-My_assembler: My_assebmbler.o
-	$(CC) $(CCFLAGS) $< -o $@
-My_assembler.o: Myassembler.c
-	$(CC) $(CCFLAGS) -c $<
 My_asm: My_asm.o libstack.a
 	$(CC) $(CCFLAGS) $< -o $@ -L. -lstack
 My_asm.o: My_asm.c

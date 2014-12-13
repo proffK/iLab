@@ -18,7 +18,7 @@ int main(int argc, char* argv[]){
 	assert(buffer);
 	
 	if (argc == 1) {
-		printf("Empty input file name\n");
+		printf("Empty input file  name\n");
 		free(buffer);
 		return 0;
 	}
@@ -136,7 +136,7 @@ int compile(FILE* source, double* buffer){
 					++counter;
 					fscanf(source, "%s", temparg);
 					if (sscanf(temparg, "r%d", &tempint)) {
-						if (0 < tempint && tempint < NUMBER_OF_REGISTORS) {
+						if (0 <= tempint && tempint < NUMBER_OF_REGISTORS) {
 							buffer[counter] = tempint;
 							++counter;
 							break;	
@@ -173,6 +173,15 @@ int compile(FILE* source, double* buffer){
 						}			
 						
 						buffer[counter] = SUB;
+						++counter;
+						break;
+					case 'i':
+						if (tempcom[2] != 'n' || tempcom[3] != '\0'){
+							printf("incorrect operator %d : %s\n", counter, tempcom);
+							return 0;
+						}			
+						
+						buffer[counter] = SIN;
 						++counter;
 						break;
 					case 'q':
@@ -241,40 +250,52 @@ int compile(FILE* source, double* buffer){
 					}
 				break;
 			case 'c':
-			
-				if (tempcom[1] != 'a' || tempcom[2] != 'l' || tempcom[3] != 'l' \
-				|| tempcom[4] != '\0'){
-					printf("incorrect operator %d : %s\n", counter, tempcom);
-					return 0;
-				}			
+				switch (tempcom[1]){
+					case 'o':
+						if (tempcom[2] != 's' || tempcom[3] != '\0'){
+							printf("incorrect operator %d : %s\n", counter, tempcom);
+							return 0;
+						}			
 						
-				buffer[counter] = CALL;
-				++counter;
-				templab = -1;
-				if (fscanf(source, "%d", &templab)){ 
+						buffer[counter] = COS;
+						++counter;
+						break;
+					case 'a':
+						if ( tempcom[2] != 'l' || tempcom[3] != 'l' \
+						|| tempcom[4] != '\0'){
+							printf("incorrect operator %d : %s\n", counter, tempcom);
+							return 0;
+						}			
+						
+						buffer[counter] = CALL;
+						++counter;
+						templab = -1;
+						if (fscanf(source, "%d", &templab)){ 
 				
-					if ((templab < 0 || MAX_LABEL < templab) && templab != -1) {
-						printf("incorrect argument in operator call %d : %d\n", counter, templab);
-						return 0;
-					}
+							if ((templab < 0 || MAX_LABEL < templab) && templab != -1) {
+								printf("incorrect argument in operator call %d : %d\n", counter, templab);
+								return 0;
+							}
 					
-					if (templab > label_table_size) {
-						int i = 0;
-						label_table = (int*) realloc (label_table, templab * sizeof(int));
+							if (templab > label_table_size) {
+								int i = 0;
+								label_table = (int*) realloc (label_table, templab * sizeof(int));
 						
-						for (i = label_table_size; i < templab - 1; ++i) {
-							label_table[i] = -1;
+								for (i = label_table_size; i < templab - 1; ++i) {
+									label_table[i] = -1;
+								}
+						
+								label_table_size = templab;
+							}
+					
+							buffer[counter] = label_table[templab - 1];
+							++counter;
 						}
-						
-						label_table_size = templab;
-					}
-					
-					buffer[counter] = label_table[templab - 1];
-					++counter;
-				}
-				else {
-					printf("incorrect argument in operator call : %d\n", counter);
-					return 0;
+						else {
+							printf("incorrect argument in operator call : %d\n", counter);
+							return 0;
+						}
+				break;
 				}
 				break;
 			case 'r':
