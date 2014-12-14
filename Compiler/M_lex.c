@@ -13,6 +13,7 @@ token* lexical_analize(FILE* inp){
 
 	char* buffer = NULL;
 	int temp = 0;
+	FILE* lexical_log = stdout;
 
 	token* token_buffer = NULL;
 	buffer = create_buffer(inp);
@@ -24,9 +25,8 @@ token* lexical_analize(FILE* inp){
 	
 	while (*cur_char != '\0' && *cur_char != EOF\
 		&& (cur_token - token_buffer < TOKEN_BUFFER_SIZE)) {
-		
-		while (*cur_char == ' ' || *cur_char == '\n' || *cur_char == '\t')
-			++cur_char;
+			
+		space_checker();
 	
 		switch (*cur_char) {
 
@@ -356,9 +356,17 @@ token* lexical_analize(FILE* inp){
 					cur_char += 3;
 
 				}
+				else {
+
+				lex_errno = cur_char;
+				return NULL;
+				
+				}
 				break;	
 			default:
-
+				
+				space_checker();
+				
 				if ('a' <= *cur_char && *cur_char <= 'z'){
 
 					cur_token -> type = VAR;
@@ -367,12 +375,13 @@ token* lexical_analize(FILE* inp){
 					++cur_token;
 
 				}
-
-				else{
+				
+				else if (*cur_char != '\0'){
 
 				lex_errno = cur_char;
-				//return 0;
-
+				fprintf(lexical_log, "%s", cur_char);
+				return NULL;
+				
 				}
 
 		}		
@@ -447,4 +456,11 @@ int token_dump(FILE* out, token* token){
 
 
 	return 0;
+}
+
+void space_checker(void){
+	
+	while (*cur_char == ' ' || *cur_char == '\n' || *cur_char == '\t')
+			++cur_char;
+			
 }

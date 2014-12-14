@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
 	buffer_size = compile(source, buffer);
 	
 	if (buffer_size == 0) {
-		printf("Compilation error:Incorrect input file\n");
+		printf("Translation error:Incorrect input file\n");
 		free(buffer);
 		fclose(source);
 		fclose(byte_code);		
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]){
 	buffer_size = compile(source, buffer);
 
 	if (buffer_size == 0) {
-		printf("Compilation error:Incorrect input file\n");
+		printf("Translation error:Incorrect input file\n");
 		free(buffer);
 		fclose(source);
 		fclose(byte_code);		
@@ -55,15 +55,14 @@ int main(int argc, char* argv[]){
 	fwrite(sign, sizeof(char), 2, byte_code);
 
 	if (fwrite(buffer, sizeof(double), buffer_size, byte_code) != buffer_size) {
-		printf("Compilation error\n");
+		printf("Translation error\n");
 		free(buffer);
 		fclose(source);
 		fclose(byte_code);
 		return 0;
 	}
 	
-	printf("Compilation complete.\nByte-code size = %d\n", buffer_size);
-	
+	printf("Translation complete.\nByte-code size = %d\n", buffer_size);
 	
 	free(buffer);
 	fclose(source);

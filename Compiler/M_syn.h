@@ -1,5 +1,5 @@
 /*!
- * Grammatik:
+ * Grammar:
  * GO ::= program;
  * program ::= {statement} 
  * statement ::= while | "{" program "}"
@@ -26,7 +26,7 @@
 #include "M_tree.h"
 #include "M_sem.h"
 
-int syntax_analize(token* source, char* out_file_name);
+int syntax_analize(token* source, FILE* out_file);
 
 node* get_program(void);
 

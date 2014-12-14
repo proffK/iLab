@@ -7,13 +7,14 @@ FILE* out_asm;
 token* syn_errno;
 token* cur_tok;
 
-int syntax_analize(token* source, char* out_file_name){
+int syntax_analize(token* source, FILE* out_file){
 
 	char* temp = NULL;	
 	FILE* std = NULL;
+	FILE* syntax_log = stdout;
 	node* parse_tree = NULL;
 	cur_tok = source;
-	out_asm = fopen(out_file_name, "w");
+	out_asm = out_file;
 
 	temp = (char*) calloc (MAX_LINE_SIZE, sizeof(char));
 	
@@ -25,17 +26,21 @@ int syntax_analize(token* source, char* out_file_name){
 	parse_tree = get_program();
 
 	block_semantic_analize(out_asm, parse_tree);
-	//node_dump2(parse_tree, stdout);
 
 	if (cur_tok -> type != END_PROGRAM){
 
 		syn_errno = cur_tok;
+		token_dump(syntax_log, cur_tok);
+		fclose(std);
 		return -1;
 
 	}
 	
 	while (fgets(temp, MAX_LINE_SIZE, std) > 0) fprintf(out_asm, "%s", temp);
-
+	
+	free(temp);
+	fclose(std);
+	
 	return 0;
 
 }

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./mylc $1 temp.kasm
+valgrind ./mylc $1 temp.kasm
 
 mv temp.kasm ./StekProc
 
