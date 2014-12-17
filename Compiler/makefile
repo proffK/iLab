@@ -6,7 +6,7 @@ $(PROGRAM_NAME): main.o libsyn.a
 	$(CC) $(CCFLAGS) $^  -o $@ -L. -lsyn
 main.o: main.c
 	$(CC) $(CCFLAGS) -c $< 
-libsyn.a: M_lex.o M_tree.o M_syn.o M_sem.o
+libsyn.a:token.o M_lex.o M_tree.o M_diff.o M_syn.o M_sem.o
 	ar rcs $@ $^
 M_syn.o: M_syn.c 
 	$(CC) $(CCFLAGS) -c $< 
@@ -15,6 +15,10 @@ M_tree.o: M_tree.c
 M_lex.o: M_lex.c
 	$(CC) $(CCFLAGS) -c $<
 M_sem.o: M_sem.c
+	$(CC) $(CCFLAGS) -c $<
+M_diff.o: M_diff.c
+	$(CC) $(CCFLAGS) -c $<
+token.o: token.c
 	$(CC) $(CCFLAGS) -c $<
 clean:
 	$(CLEAN)

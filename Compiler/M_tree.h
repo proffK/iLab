@@ -20,7 +20,7 @@ typedef struct tree_node node;
 
 node* node_new(void);
 
-int node_ctor(elem_t data, node* new_node);
+int node_ctor(node* new_node, int type, double val);
 
 int node_dtor(node* deleted_node);
 
@@ -37,5 +37,7 @@ int create_tree(FILE* input, node* tree, char* (*get_node_data) (char*, elem_t*)
 char* node_import(node* new, char* buffer, char* (*get_node_data) (char*, elem_t*));
 
 int node_ok(node* nd);
+
+node* node_cpy(node* in);
 
 #endif

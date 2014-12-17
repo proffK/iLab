@@ -29,14 +29,16 @@ node* node_new(void){
 	return new_node;
 }
 ///#####################################################################
-int node_ctor(elem_t data, node* new_node){
+int node_ctor(node* new_node, int type, double val){
 	
 	if (!(node_ok(new_node))) return -1; 
 		
-		new_node -> data = data;
-		new_node -> left = NULL;
-		new_node -> right = NULL;
-		return 0;
+	new_node -> data = token_new();
+	token_ctor(new_node -> data, type, val);
+
+	new_node -> left = NULL;
+	new_node -> right = NULL;
+	return 0;
 		
 	
 }
@@ -82,7 +84,7 @@ node* add_node_left(node* parent, node* new){
 ///#####################################################################
 node* add_node_right(node* parent, node* new){
 	
-	if (!(node_ok(new) && node_ok(parent))) return NULL;
+	if (!(node_ok(new) || node_ok(parent))) return NULL;
 		
 	if (parent -> right == NULL){
 			
@@ -141,7 +143,7 @@ int node_dump(node* tree, FILE* out){
 		fprintf(stdout,"%c)", END_NODE);
 	}
 
-	m1:	return 0;
+		return 0;
 }
 ///#####################################################################
 char* node_import(node* new, char* buffer, char* (*get_node_data) (char*, elem_t*)){
@@ -202,3 +204,35 @@ int create_tree(FILE* input, node* tree, char* (*get_node_data) (char*, elem_t*)
 
 	return 0;
 }
+
+///#################################################################################
+
+node* node_cpy(node* in){
+
+	node* nd = node_new();
+
+	if (in -> left != NULL){
+
+	nd -> left = node_cpy(in -> left);
+
+	}
+
+	if (in -> right != NULL){
+
+	nd -> right = node_cpy(in -> right);
+
+	}
+	
+	if (in -> data != NULL){
+
+		nd -> data = token_new();
+		nd -> data -> type = in -> data -> type;
+		nd -> data -> val = in -> data -> val;
+	
+	}
+
+	return nd;
+
+}
+
+

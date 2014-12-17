@@ -25,7 +25,9 @@ int syntax_analize(token* source, FILE* out_file){
 
 	parse_tree = get_program();
 
-	block_semantic_analize(out_asm, parse_tree);
+	//block_semantic_analize(out_asm, parse_tree);
+	
+	//tex_dump(parse_tree, stdout);
 
 	if (cur_tok -> type != END_PROGRAM){
 
@@ -92,6 +94,8 @@ node* get_statement(void){
 		nd -> left = get_statement();
 		
 	}
+	
+
 	
 	return nd;
 
@@ -175,6 +179,8 @@ node* get_function(void){
 	
 	nd -> left = get_expression();
 	
+	//tex_dump(nd -> left , stdout);
+	
 	if (cur_tok -> type != FUNCTION) return nd;
 	
 	nd -> data = cur_tok;
@@ -199,6 +205,7 @@ node* get_asg(void){
 	++cur_tok;
 
 	nd -> left = get_expression();
+	
 
 	return nd;
 
@@ -221,6 +228,8 @@ node* get_2pr(void){
 	node* nd = node_new();
 
 	nd -> left = get_1pr();
+	
+
 
 	if (cur_tok -> type == OPERATOR &&\
 	       (cur_tok -> val == '+' || cur_tok -> val == '-')){
@@ -229,6 +238,11 @@ node* get_2pr(void){
 		++cur_tok;
 		nd -> right = get_2pr();
 
+	}
+	else {
+		
+		return nd -> left;
+	
 	}
 
 	return nd;
@@ -240,6 +254,8 @@ node* get_1pr(void){
 	node* nd = node_new();
 
 	nd -> left = get_0pr();
+	
+
 
 	if (cur_tok -> type == OPERATOR &&\
 	       (cur_tok -> val == '*' || cur_tok -> val == '/')){
@@ -249,6 +265,11 @@ node* get_1pr(void){
 		nd -> right = get_1pr();
 
 	}
+	else {
+		
+		return nd -> left;
+		
+	}
 
 	return nd;
 
@@ -257,6 +278,13 @@ node* get_1pr(void){
 node* get_0pr(void){
 	
 	node* nd = node_new();
+
+	if (cur_tok -> type == DIFF_OPER) {
+
+		node_dtor(nd);
+		return get_diff();
+
+	}
 
 	nd -> left = get_paren();
 
@@ -269,9 +297,48 @@ node* get_0pr(void){
 		nd -> right = get_0pr();
 
 	}
+	else {
+		
+		return nd -> left;
+		
+	}
 
 	return nd;
 
+}
+
+node* get_diff(void){
+	
+	FILE* out = 0;
+	int temp = 0;
+	node* df = NULL;
+	node* nd = node_new();
+	
+	temp = cur_tok -> val;
+	++cur_tok;
+
+	nd = get_paren();
+	
+	out = fopen("diff.tex", "w");
+	
+	fprintf(out, " \\documentclass[a4paper,20pt]{article} \n\
+	\n\
+	\\usepackage[english,russian]{babel}\n\
+	\\usepackage[utf8]{inputenc}\n\
+	\n\
+	\\title{Отчет о взятии производной}\n\
+	\\author{Клим Киреев, 411 группа, ФРТК}\n\
+	\\date{}\n\
+	\n\
+	\\begin{document}\n\
+	\\maketitle\n\
+	\\newpage\n");
+	
+	df = diff_tree(nd, temp, out);
+	
+	fprintf(out,"\n\\end{document}");
+	
+	return df;
 }
 
 node* get_paren(void){

@@ -1,0 +1,23 @@
+
+jp 1
+:105
+pop r0
+inp
+push r0
+ret
+:73
+pop r0
+out
+push r0
+ret
+:67
+pop r0
+outc 1
+push r0
+ret
+:99
+pop r0
+inpc
+push r0
+ret
+:1

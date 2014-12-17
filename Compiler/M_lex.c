@@ -59,9 +59,11 @@ token* lexical_analize(FILE* inp){
 				break;
 			case '-':
 
-				if (*(cur_char + 1) == '[' && *(cur_char + 3) == ']'\
-				   && *(cur_char + 4) == '-'\
-				   && *(cur_char + 5) == '>') {
+				if (*(cur_char + 1) != '\0' && *(cur_char + 1) == '[' &&\
+				    *(cur_char + 2) != '\0' &&\
+	    			    *(cur_char + 3) != '\0' && *(cur_char + 3) == ']' &&\
+				    *(cur_char + 4) != '\0' && *(cur_char + 4) == '-' &&\
+				    *(cur_char + 5) != '\0' && *(cur_char + 5) == '>'){
 
 					cur_token -> type = FUNCTION;
 					
@@ -126,13 +128,28 @@ token* lexical_analize(FILE* inp){
 				++cur_token;
 
 				break;
-			case '(': case ')': case '[': case ']':  
+			case '(': case ')': case '[': case ']': 	
+				if (*cur_char == '(' &&\
+				    *(cur_char + 1) != '\0' && *(cur_char + 1) == 'd' &&\
+			            *(cur_char + 2) != '\0' && *(cur_char + 2) == '/' &&\
+				    *(cur_char + 3) != '\0' && *(cur_char + 3) == 'd' &&\
+				    *(cur_char + 4) != '\0' &&\
+				    *(cur_char + 5) != '\0' && *(cur_char + 5) == ')'){
 
-				cur_token -> type = BRACE;
-				cur_token -> val = *cur_char;
+					cur_token -> type = DIFF_OPER;
+					cur_token -> val = *(cur_char + 4);
+					++cur_token;
+					cur_char += 6;
 
-				++cur_char;
-				++cur_token;
+				}
+				
+				else {
+					cur_token -> type = BRACE;
+					cur_token -> val = *cur_char;
+
+					++cur_char;
+					++cur_token;
+				}
 
 				break;
 			case '=':
@@ -221,8 +238,8 @@ token* lexical_analize(FILE* inp){
 				break;
 			case 'O':
 
-				if (*(cur_char + 1) == 'U' &&
-				    *(cur_char + 2) == 'T'){
+				if (*(cur_char + 1) != '\0' && *(cur_char + 1) == 'U' &&\
+				    *(cur_char + 2) != '\0' && *(cur_char + 2) == 'T'){
 					
 					cur_token -> type = STREAM;
 					cur_token -> val = OUT_STREAM;
@@ -241,7 +258,8 @@ token* lexical_analize(FILE* inp){
 				}
 				break;
 			case '<':
-				if (*(cur_char + 1) == '?' && *(cur_char + 2) == '>'){
+				if (*(cur_char + 1) != '\0' && *(cur_char + 1) == '?' &&\
+				    *(cur_char + 2) != '\0' && *(cur_char + 2) == '>'){
 
 					cur_token -> type = WHILE;
 					cur_token -> val = cur_label;	
@@ -261,8 +279,8 @@ token* lexical_analize(FILE* inp){
 				}
 				break;
 			case 's':
-				if (*(cur_char + 1) == 'i' &&
-				    *(cur_char + 2) == 'n'){
+				if (*(cur_char + 1) != '\0' && *(cur_char + 1) == 'i' &&\
+				    *(cur_char + 2) != '\0' && *(cur_char + 2) == 'n'){
 					
 					cur_token -> type = OPERATOR;
 					cur_token -> val = 's';
@@ -280,8 +298,8 @@ token* lexical_analize(FILE* inp){
 				}
 				break;
 			case 'c':
-				if (*(cur_char + 1) == 'o' &&
-				    *(cur_char + 2) == 's'){
+				if (*(cur_char + 1) != '\0' && *(cur_char + 1) == 'o' &&\
+				    *(cur_char + 2) != '\0' && *(cur_char + 2) == 's'){
 					
 					cur_token -> type = OPERATOR;
 					cur_token -> val = 'c';
@@ -307,7 +325,7 @@ token* lexical_analize(FILE* inp){
 				++cur_char;
 				break;
 			case ':':
-				if (*(cur_char + 1) == '>'){
+				if (*(cur_char + 1) != '\0' && *(cur_char + 1) == '>'){
 
 					cur_token -> type = GOTO;
 					++cur_token;
@@ -342,12 +360,14 @@ token* lexical_analize(FILE* inp){
 				
 				++cur_char;
 				
-				while (*cur_char != '#') ++cur_char;
+				while (*cur_char != '#' && *cur_char != '\0') ++cur_char;
 				
-				++cur_char;
+				if (*cur_char != '\0') ++cur_char;
+
 			break;
 			case '!':
-				if (*(cur_char + 1) == '?' && *(cur_char + 2) == '!'){
+				if (*(cur_char + 1) != '\0' && *(cur_char + 1) == '?' &&\
+				    *(cur_char + 1) != '\0' && *(cur_char + 2) == '!'){
 
 					cur_token -> type = IF;
 					cur_token -> val = cur_label;
@@ -411,52 +431,6 @@ char* create_buffer(FILE* inp){
 	return buffer;
 
 }		
-
-int token_dump(FILE* out, token* token){	
- 	
-	if (token -> type == NUMBER){
-		fprintf(out, "NUMBER:%lg\n", token -> val);
-	}
-	if (token -> type == VAR){
-		fprintf(out, "VAR:%lg\n", token -> val);
-	}
-	if (token -> type == BRACE){
-		fprintf(out, "BRACE:%c\n", (int)  token -> val);
-	}
-	if (token -> type == ASSIGN){
-		fprintf(out, "ASSIGN:%c\n", (int) token -> val);
-	}
-	if (token -> type == OPERATOR){
-		fprintf(out, "OPERATOR:%c\n", (int) token -> val);
-	}
-	if (token -> type == END_STATEMENT){
-		fprintf(out, "END_STATEMENT:%lg\n", token -> val);
-	}
-	if (token -> type == END_BLOCK){
-		fprintf(out, "END_BLOCK:%lg\n", token -> val);
-	}
-	if (token -> type == BEGIN_BLOCK){
-		fprintf(out, "BEGIN_BLOCK:%lg\n", token -> val);
-	}
-	if (token -> type == FUNCTION){
-		fprintf(out, "FUNCTION:%lg\n", token -> val);
-	}
-	if (token -> type == STREAM){
-		fprintf(out, "STREAM:%lg\n", token -> val);
-	}
-	if (token -> type == WHILE){
-		fprintf(out, "WHILE:%lg\n", token -> val);
-	}
-	if (token -> type == IF){
-		fprintf(out, "IF:%lg\n", token -> val);
-	}
-	if (token -> type == COMPARATION){
-		fprintf(out, "COMPARATION:%c\n",(int) token -> val);
-	}
-
-
-	return 0;
-}
 
 void space_checker(void){
 	
