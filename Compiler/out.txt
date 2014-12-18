@@ -1,3 +1,33 @@
+push 3
+push 4
+push r24
+push 2
+mul
+mul
+add
+push r24
+sin
+mul
+push 3
+push r24
+mul
+push 4
+push r24
+push 2
+pow
+mul
+push 8
+add
+add
+push r24
+cos
+mul
+add
+push r24
+sin
+push 2
+pow
+div
 
 jp 1
 :105

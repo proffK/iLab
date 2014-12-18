@@ -2,6 +2,7 @@
 #include "M_diff.h"
 
 node* diff_tree(node* tree, int var, FILE* out){
+	
 	static node* diffed_tree = 0;
 	node* nd = node_new();
 
@@ -13,8 +14,6 @@ node* diff_tree(node* tree, int var, FILE* out){
 		return NULL;
 
 	}
-	
-
 
 	if (tree -> data -> type == OPERATOR){
 
@@ -41,43 +40,20 @@ node* diff_tree(node* tree, int var, FILE* out){
 			tex_dump(diffed_tree, out);
 			fprintf(out, "$\n\n");
 			
-			//node_dtor(nd -> left);
-			//node_dtor(nd -> right);
-			
+			node_dtor(nd -> left);
 			nd -> left = diff_tree(tree -> left, var, out);
+			
+			node_dtor(nd -> right);
 			nd -> right = diff_tree(tree -> right, var, out);
 			
 		}
 
 	    else if (tree -> data -> val == '*'){
 
-			
-
 			node_ctor(nd , OPERATOR, '+');
 
 			nd -> left = node_new();
-			node_ctor(nd -> left, OPERATOR, '*');
-			
-			if (tree -> left != NULL){
-				
-				nd -> left -> left = node_cpy(tree -> left);
-				nd -> left -> left -> data -> diff_flag = 1;
-				
-			}
-			
-			if (tree -> left  != NULL){
-				
-				nd -> left -> right = node_cpy(tree -> right);
-				
-			}
-			
-			
-			fprintf(out, "Пользуясь правилом производной произведения:\n\n$");
-			tex_dump(diffed_tree, out);
-			fprintf(out, "$\n\n");
-
-			nd -> left -> left = diff_tree(tree -> left, var, out);
-		    nd -> left -> right = node_cpy(tree -> right);	     
+			node_ctor(nd -> left, OPERATOR, '*');	     
 			
 			nd -> right = node_new();
 			node_ctor(nd -> right, OPERATOR, '*');
@@ -85,21 +61,29 @@ node* diff_tree(node* tree, int var, FILE* out){
 			if (tree -> right != NULL){
 				
 				nd -> right -> left = node_cpy(tree -> left);
-				
-			}
-			
-			if (tree -> right != NULL){
-				
+						
 				nd -> right -> right = node_cpy(tree -> right);
 				nd -> right -> right -> data -> diff_flag = 1;
 				
 			}
 
+			if (tree -> left != NULL){
+				
+				nd -> left -> left = node_cpy(tree -> left);
+				nd -> left -> left -> data -> diff_flag = 1;
+				
+				nd -> left -> right = node_cpy(tree -> right);
+								
+			}
+
 			fprintf(out, "Пользуясь правилом производной произведения:\n\n$");
 			tex_dump(diffed_tree, out);
 			fprintf(out, "$\n\n");
-
-			nd -> right -> left = node_cpy(tree -> left);
+			
+			node_dtor(nd -> left -> left);
+			nd -> left -> left = diff_tree(tree -> left, var, out);
+			
+			node_dtor(nd -> right -> right);
 		    nd -> right -> right = diff_tree(tree -> right, var, out);
 
 		}
@@ -113,24 +97,42 @@ node* diff_tree(node* tree, int var, FILE* out){
 
 			nd -> left -> left = node_new();
 			node_ctor(nd -> left -> left, OPERATOR, '*');
-
-			nd -> left -> left -> left = diff_tree(tree -> left, var,\
-				       				out);
-			nd -> left -> left -> right = node_cpy(tree -> right);
-
+			
 			nd -> left -> right = node_new();
 			node_ctor(nd -> left -> right, OPERATOR, '*');
 
+			nd -> left -> left -> right = node_cpy(tree -> right);
+
 			nd -> left -> right -> left = node_cpy(tree -> left);
-			nd -> left -> right -> right = diff_tree(tree -> right,\
-				       				  var, out);
 
 			nd -> right = node_new();
 			node_ctor(nd -> right, OPERATOR, '^');
+			
+			nd -> right -> left = node_cpy(tree -> right);
 
 			nd -> right -> right = node_new();
 			node_ctor(nd -> right -> right, NUMBER, 2);
-			nd -> right -> left = node_cpy(tree -> right);
+			
+			nd -> left -> left -> left = node_cpy(tree -> left);
+			
+			nd -> left -> left -> left -> data -> diff_flag = 1;
+			
+			nd -> left -> right -> right = node_cpy(tree -> right);
+				       				  
+			nd -> left -> right -> right -> data -> diff_flag = 1;
+			
+			fprintf(out, "Пользуясь правилом производной частного:\n\n$");
+			tex_dump(diffed_tree, out);
+			fprintf(out, "$\n\n");
+			
+			node_dtor(nd -> left -> left -> left);
+			nd -> left -> left -> left = diff_tree(tree -> left, var,\
+				       				out);
+			
+			node_dtor(nd -> left -> right -> right);
+			nd -> left -> right -> right = diff_tree(tree -> right,\
+				       				  var, out);
+			
 
 		}
 
@@ -148,13 +150,19 @@ node* diff_tree(node* tree, int var, FILE* out){
 			nd -> left -> left -> right = node_new();
 			node_ctor(nd -> left -> left -> right, NUMBER,\
 					  tree -> right -> data -> val - 1);
-
-			nd -> left -> right = node_new();
-			nd -> left -> right = diff_tree(tree -> left, var, out);
-
 			nd -> right = node_new();
 			node_ctor(nd -> right, NUMBER,\
 				  tree -> right -> data -> val);
+				  
+			nd -> left -> right = node_cpy(tree -> left);
+			nd -> left -> right -> data -> diff_flag = 1;
+			
+			fprintf(out, "Пользуясь правилом производной степени:\n\n$");
+			tex_dump(diffed_tree, out);
+			fprintf(out, "$\n\n");
+			
+			node_dtor(nd -> left -> right);
+			nd -> left -> right = diff_tree(tree -> left, var, out);
 
 		}
 
@@ -165,10 +173,16 @@ node* diff_tree(node* tree, int var, FILE* out){
 			nd -> left = node_new();
 			node_ctor(nd -> left, OPERATOR, 'c');
 
-			//printf("...%p\n" , tree -> right -> data);
-
 			nd -> left -> left = node_cpy(tree -> right);
-
+			
+			nd -> right = node_cpy(tree -> right);
+			nd -> right -> data -> diff_flag = 1;
+			
+			fprintf(out, "Пользуясь правилом производной синуса:\n\n$");
+			tex_dump(diffed_tree, out);
+			fprintf(out, "$\n\n");
+			
+			node_dtor(nd -> right);
 			nd -> right = diff_tree(tree -> right, var, out);
 
 		}
@@ -184,8 +198,18 @@ node* diff_tree(node* tree, int var, FILE* out){
 			node_ctor(nd -> left -> left, NUMBER, -1);
 
 			nd -> left -> right = node_new();
-			node_ctor(nd -> left -> right, OPERATOR, 'c');
+			node_ctor(nd -> left -> right, OPERATOR, 's');
+			
 			nd -> left -> right -> left = node_cpy(tree -> right);
+			
+			nd -> right = node_cpy(tree -> right);
+			nd -> right -> data -> diff_flag = 1;
+			
+			fprintf(out, "Пользуясь правилом производной косинуса:\n\n$");
+			tex_dump(diffed_tree, out);
+			fprintf(out, "$\n\n");
+			
+			node_dtor(nd -> right);
 
 			nd -> right = diff_tree(tree -> right, var, out);
 
@@ -201,10 +225,13 @@ node* diff_tree(node* tree, int var, FILE* out){
 
 	
 	else if (tree -> data -> type == NUMBER){
-	
-
+		
 		node_ctor(nd, NUMBER, 0);
-
+		
+		fprintf(out, "Пользуясь правилом производной константы:\n\n$");
+		tex_dump(diffed_tree, out);
+		fprintf(out, "$\n\n");
+		
 	}
 
 	else if (tree -> data -> type == VAR){
@@ -212,12 +239,20 @@ node* diff_tree(node* tree, int var, FILE* out){
 		if (tree -> data -> val == var){
 			
 			node_ctor(nd, NUMBER, 1);
+		
+			fprintf(out, "Пользуясь правилом производной переменной:\n\n$");
+			tex_dump(diffed_tree, out);
+			fprintf(out, "$\n\n");
 
 		}
 		else {
 			
 			node_ctor(nd, NUMBER, 0);
-
+		
+			fprintf(out, "Пользуясь правилом производной константы:\n\n$");
+			tex_dump(diffed_tree, out);
+			fprintf(out, "$\n\n");
+			
 		}
 
 	}
@@ -336,6 +371,7 @@ int tex_dump(node* tree, FILE* out){
 			case NUMBER:
 				fprintf(out, "%lg", tree -> data -> val);
 				break;
+			default:
 			break;
 		}
 	}
@@ -351,11 +387,182 @@ int tex_dump(node* tree, FILE* out){
 	return 0;
 }
 
-node* first_optimize(node* tree){
-	return NULL;
+node* first_optimize(node* tree, int* end_flag){
+	
+	node* temp = NULL;
+	
+	if (tree == NULL) return NULL;
+	
+	//printf("%d", *end_flag);
+	//fflush(stdout);
+	
+
+	if (tree -> left != NULL){ 
+		
+		tree -> left = first_optimize(tree -> left, end_flag);
+		
+	}
+
+	if (tree -> right != NULL){ 
+		
+		tree -> right = first_optimize(tree -> right, end_flag);
+		
+	}
+	
+		if (tree -> data != NULL && tree -> data -> type == OPERATOR) {
+		
+		if (tree -> data -> val == '-' ||\
+		    tree -> data -> val == '+' ){
+			
+			if (tree -> left != NULL &&\
+				tree -> left -> data -> type == NUMBER &&\
+				tree -> left -> data -> val == 0){
+				
+				++*end_flag;	
+				temp = node_cpy(tree -> right);
+				node_dtor(tree);
+				return temp;
+			
+			}
+			
+			if (tree -> right != NULL &&\
+				tree -> right -> data -> type == NUMBER &&\
+				tree -> right -> data -> val == 0){
+				
+				++*end_flag;	
+				temp = node_cpy(tree -> left);
+				node_dtor(tree);
+				return temp;
+			}
+			
+			if (tree -> data -> val == '+'){
+			
+				if (tree -> left != NULL &&\
+					tree -> right != NULL &&\
+					tree -> right -> data -> type == NUMBER &&\
+					tree -> left -> data -> type == NUMBER){
+				
+					node* nw = node_new();
+					node_ctor(nw, NUMBER, tree -> right -> data -> val +\
+							tree -> left -> data -> val);
+					++*end_flag;
+					node_dtor(tree);
+					return nw;
+			
+				}
+			}
+			
+			if (tree -> data -> val == '-'){
+			
+				if (tree -> left != NULL &&\
+					tree -> right != NULL &&\
+					tree -> right -> data -> type == NUMBER &&\
+					tree -> left -> data -> type == NUMBER){
+				
+					node* nw = node_new();
+					node_ctor(nw, NUMBER, tree -> right -> data -> val -\
+							tree -> left -> data -> val);
+					++*end_flag;
+					node_dtor(tree);
+					return nw;
+			
+				}
+			}
+		
+		}
+		
+		if (tree -> data -> val == '*'){
+			
+			if (tree -> left != NULL &&\
+				tree -> left -> data -> type == NUMBER &&\
+				tree -> left -> data -> val == 1){
+				
+				++*end_flag;	
+				temp = node_cpy(tree -> right);
+				node_dtor(tree);
+				return temp;
+			
+			}
+			
+			if (tree -> left != NULL &&\
+				tree -> left -> data -> type == NUMBER &&\
+				tree -> left -> data -> val == 0){
+				
+				++*end_flag;	
+				temp = node_cpy(tree -> left);
+				node_dtor(tree);
+				return temp;
+			
+			}
+			
+			if (tree -> right != NULL &&\
+				tree -> right -> data -> type == NUMBER &&\
+				tree -> right -> data -> val == 1){
+				
+				++*end_flag;	
+				temp = node_cpy(tree -> left);
+				node_dtor(tree);
+				return temp;
+			
+			}
+			
+			if (tree -> right != NULL &&\
+				tree -> right -> data -> type == NUMBER &&\
+				tree -> right -> data -> val == 0){
+				
+				++*end_flag;	
+				temp = node_cpy(tree -> right);
+				node_dtor(tree);
+				return temp;
+			}
+		
+		}
+		
+		if (tree -> data -> val == '/'){
+			
+			if (tree -> left != NULL &&\
+				tree -> left -> data -> type == NUMBER &&\
+				tree -> left -> data -> val == 0){
+				
+				++*end_flag;	
+				temp = node_cpy(tree -> left);
+				node_dtor(tree);
+				return temp;
+			
+			}
+			
+			if (tree -> right != NULL &&\
+				tree -> right -> data -> type == NUMBER &&\
+				tree -> right -> data -> val == 1){
+				
+				++*end_flag;	
+				temp = node_cpy(tree -> left);
+				node_dtor(tree);
+				return temp;
+			
+			}
+		
+		}
+		
+		if (tree -> data -> val == '^'){
+			
+			if (tree -> right != NULL &&\
+				tree -> right -> data -> type == NUMBER &&\
+				tree -> right -> data -> val == 1){
+				
+				++*end_flag;	
+				temp = node_cpy(tree -> left);
+				node_dtor(tree);
+				return temp;
+			
+			}
+		
+		}
+	}
+		
+	
+	return tree;
+	
 }
 
-node* second_optimize(node* tree){
-	return NULL;
-}
 

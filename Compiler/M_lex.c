@@ -140,6 +140,7 @@ token* lexical_analize(FILE* inp){
 					cur_token -> val = *(cur_char + 4);
 					++cur_token;
 					cur_char += 6;
+					
 
 				}
 				

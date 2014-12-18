@@ -59,7 +59,13 @@ int node_dtor(node* deleted_node){
 		
 	}
 	
-	deleted_node -> data = NULL;
+	if (deleted_node -> data != NULL){
+	
+		free(deleted_node -> data);
+		deleted_node -> data = NULL;
+	
+	}
+	
 	free(deleted_node);
 	deleted_node = NULL;
 	

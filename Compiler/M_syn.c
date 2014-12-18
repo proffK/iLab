@@ -18,16 +18,13 @@ int syntax_analize(token* source, FILE* out_file){
 
 	temp = (char*) calloc (MAX_LINE_SIZE, sizeof(char));
 	
-	
 	std = fopen("std.txt", "r");
 	
 	parse_tree = node_new();
 
 	parse_tree = get_program();
 
-	//block_semantic_analize(out_asm, parse_tree);
-	
-	//tex_dump(parse_tree, stdout);
+	block_semantic_analize(out_asm, parse_tree);
 
 	if (cur_tok -> type != END_PROGRAM){
 
@@ -81,6 +78,7 @@ node* get_statement(void){
 		
 	}
 	
+	
 	nd -> right = get_while();
 	
 	if (cur_tok -> type == END_STATEMENT){
@@ -89,13 +87,12 @@ node* get_statement(void){
 
 	}
 	
+	
 	if (cur_tok -> type != END_BLOCK){
 	
 		nd -> left = get_statement();
 		
 	}
-	
-
 	
 	return nd;
 
@@ -114,7 +111,6 @@ node* get_while(void){
 		if (cur_tok -> type == BRACE){
 			
 			++cur_tok;
-			token_dump(stdout, cur_tok);
 			nd -> right = get_statement();
 			
 		}
@@ -178,8 +174,6 @@ node* get_function(void){
 	}
 	
 	nd -> left = get_expression();
-	
-	//tex_dump(nd -> left , stdout);
 	
 	if (cur_tok -> type != FUNCTION) return nd;
 	
@@ -332,11 +326,40 @@ node* get_diff(void){
 	\n\
 	\\begin{document}\n\
 	\\maketitle\n\
-	\\newpage\n");
+	\\newpage\n\{\\large");
+	
+	fprintf(out, "\n\nДифференцируем выражение:\n\n$");
+	
+	tex_dump(nd, out);
+	
+	fprintf(out, "$\n\n");
 	
 	df = diff_tree(nd, temp, out);
 	
-	fprintf(out,"\n\\end{document}");
+	fprintf(out, "\n\nВ итоге получаем:\n\n$");
+	
+	do {
+		
+		temp = 0;
+		df = first_optimize(df, &temp);
+		
+	} while (temp != 0);
+	
+	tex_dump(df, out);
+	
+	fprintf(out, "$\n\n");
+	
+	fprintf(out, "\n\nСписок литературы:\n\n\
+	Керниган Б. У., Ритчи Д. М. Язык программирования C.\n\n\
+	Фихтенгольц Г.М. - Основы математического анализа (в 2-х томах).\n\n\
+	Материалы с семинаров Дединского Ильи Рудольфовича.\n\n\
+	\n");
+	
+	fprintf(out,"\n}\n\\end{document}");
+	
+	node_dtor(nd);
+	
+	fclose(out);
 	
 	return df;
 }
@@ -344,7 +367,9 @@ node* get_diff(void){
 node* get_paren(void){
 
 	node* nd = node_new();
+	
 
+	
 	if (cur_tok -> type == BRACE && cur_tok -> val == '('){
 
 		++cur_tok;
