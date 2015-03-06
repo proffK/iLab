@@ -59,10 +59,10 @@ token* lexical_analize(FILE* inp){
 				break;
 			case '-':
 
-				if (*(cur_char + 1) != '\0' && *(cur_char + 1) == '[' &&\
-				    *(cur_char + 2) != '\0' &&\
-	    			    *(cur_char + 3) != '\0' && *(cur_char + 3) == ']' &&\
-				    *(cur_char + 4) != '\0' && *(cur_char + 4) == '-' &&\
+				if (*(cur_char + 1) != '\0' && *(cur_char + 1) == '[' &&
+				    *(cur_char + 2) != '\0' &&
+	    			*(cur_char + 3) != '\0' && *(cur_char + 3) == ']' &&
+				    *(cur_char + 4) != '\0' && *(cur_char + 4) == '-' &&
 				    *(cur_char + 5) != '\0' && *(cur_char + 5) == '>'){
 
 					cur_token -> type = FUNCTION;
@@ -129,18 +129,17 @@ token* lexical_analize(FILE* inp){
 
 				break;
 			case '(': case ')': case '[': case ']': 	
-				if (*cur_char == '(' &&\
-				    *(cur_char + 1) != '\0' && *(cur_char + 1) == 'd' &&\
-			            *(cur_char + 2) != '\0' && *(cur_char + 2) == '/' &&\
-				    *(cur_char + 3) != '\0' && *(cur_char + 3) == 'd' &&\
-				    *(cur_char + 4) != '\0' &&\
+				if (*cur_char == '(' &&
+				    *(cur_char + 1) != '\0' && *(cur_char + 1) == 'd' &&
+			        *(cur_char + 2) != '\0' && *(cur_char + 2) == '/' &&
+				    *(cur_char + 3) != '\0' && *(cur_char + 3) == 'd' &&
+				    *(cur_char + 4) != '\0' &&
 				    *(cur_char + 5) != '\0' && *(cur_char + 5) == ')'){
 
 					cur_token -> type = DIFF_OPER;
 					cur_token -> val = *(cur_char + 4);
 					++cur_token;
 					cur_char += 6;
-					
 
 				}
 				
