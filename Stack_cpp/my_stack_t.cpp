@@ -1,38 +1,73 @@
-#include "my_stack.h"
+#ifndef _my_stack_t_
+#define _my_stack_t_
+#include <climits>
 #include <cstdlib>
-#include <cstdio>
+
+#define DEBUG
 
 #ifdef DEBUG
 
-const unsigned int MAX_STACK_SIZE = UINT_MAX;
+#include <fstream>
 
-const unsigned int AUTO_START_SIZE = 100;
+#endif
 
-const unsigned int AUTO_RESIZE_STEP = 10;
+template <typename stack_elem>
 
-enum stack_modes
+class pk_Stack
 {
+public:
+
+    pk_Stack();
+    pk_Stack(unsigned int size);
+    ~pk_Stack();
+    int is_empty();
+    int is_full();
+    int push(stack_elem new_elem);
+    stack_elem pop();
+    unsigned int get_size();
+    unsigned int get_head();
+    int set_size(unsigned int new_size);
+    bool is_OK();
+
+private:
+
+    unsigned int size_;
+    stack_elem* data_;
+    unsigned int head_;
+    int mode_;
+    int errno_;
+    int dump();
+    const unsigned int MAX_STACK_SIZE = UINT_MAX;
+    const unsigned int AUTO_START_SIZE = 100;
+    const unsigned int AUTO_RESIZE_STEP = 10;
+    enum stack_modes
+    {
     NOT_VALIDETED = 0,
     FIXED = 1,
     EXPANDED = 2
-
-};
-
-enum stack_error
-{
+    };
+    enum stack_error
+    {
     STACK_OK = 0,
     NOT_DATA_MEMORY = 1,
     STACK_CANT_EXPAND = 2,
     POP_EMPTY_STACK = 3,
     NO_ENOUGH_MEMORY = 4,
     INVAL = 5
+    };
+    
+    #ifdef DEBUG
+
+    const char* LOG_FILE_NAME = "stack_log.txt";
+    std::ofstream stack_log;
+
+    #endif
+
 };
 
-std::FILE* stack_log;
 
-#endif
-
-Stack::Stack()
+template <typename stack_elem>
+pk_Stack<stack_elem>::pk_Stack()
 {
     size_ = AUTO_START_SIZE;
     data_ = (stack_elem*) calloc (size_,
@@ -48,7 +83,8 @@ Stack::Stack()
     mode_ = EXPANDED;
 }
 
-Stack::Stack(unsigned int size)
+template <typename stack_elem>
+pk_Stack<stack_elem>::pk_Stack(unsigned int size)
 {
     size_ = size;
     data_ = (stack_elem*) calloc (size_,
@@ -65,7 +101,8 @@ Stack::Stack(unsigned int size)
     mode_ = FIXED;
 }
 
-Stack::~Stack()
+template <typename stack_elem>
+pk_Stack<stack_elem>::~pk_Stack()
 {
     size_ = 0;
     free(data_);
@@ -74,18 +111,20 @@ Stack::~Stack()
     mode_ = NOT_VALIDETED;
 }
 
-int Stack::is_empty()
+template <typename stack_elem>
+int pk_Stack<stack_elem>::is_empty()
 {
     if (!(this->is_OK())) return -1;
 
-    if (head_ != 0) {
+    if (head_ == 0) {
         return true;
     } else {
         return false;
     }
 }
 
-int Stack::is_full()
+template <typename stack_elem>
+int pk_Stack<stack_elem>::is_full()
 {
     if (!(this->is_OK())) return -1;
     
@@ -96,7 +135,8 @@ int Stack::is_full()
     }
 }
 
-int Stack::push(stack_elem new_elem)
+template <typename stack_elem>
+int pk_Stack<stack_elem>::push(stack_elem new_elem)
 {
     if (!(this->is_OK())) return -1;
 
@@ -143,7 +183,8 @@ int Stack::push(stack_elem new_elem)
     return 0;
 }
 
-stack_elem Stack::pop() 
+template <typename stack_elem>
+stack_elem pk_Stack<stack_elem>::pop() 
 {
     if (!(this->is_OK())) return -1;
 
@@ -154,18 +195,18 @@ stack_elem Stack::pop()
         return -1;
 
     }
-
     --head_;
-
-    return data_[head_ - 1];
+    return data_[head_];
 }
 
-unsigned int Stack::get_size()
+template <typename stack_elem>
+unsigned int pk_Stack<stack_elem>::get_size()
 {   
     return size_;
 }
 
-int Stack::set_size(unsigned int new_size)
+template <typename stack_elem>
+int pk_Stack<stack_elem>::set_size(unsigned int new_size)
 {
     if (!(this->is_OK())) return -1;
     
@@ -177,12 +218,14 @@ int Stack::set_size(unsigned int new_size)
     return 0;
 }
 
-unsigned int Stack::get_head()
+template <typename stack_elem>
+unsigned int pk_Stack<stack_elem>::get_head()
 {
     return head_;
 }
 
-bool Stack::is_OK()
+template <typename stack_elem>
+bool pk_Stack<stack_elem>::is_OK()
 {
 #ifdef DEBUG
 
@@ -194,7 +237,7 @@ bool Stack::is_OK()
 
     }
 
-    if (head_ > size) {
+    if (head_ > size_) {
 
         errno_ = INVAL;
         this->dump();
@@ -207,39 +250,45 @@ bool Stack::is_OK()
     return true;
 }
 
-int Stack::dump()
+template <typename stack_elem>
+int pk_Stack<stack_elem>::dump()
 {
 #ifdef DEBUG
 
+    stack_log.open(LOG_FILE_NAME);
+
     switch (errno_) {
-        using namespace std
+        using namespace std;
         case STACK_OK:
             break;
         case NOT_DATA_MEMORY:
-            fprintf(stack_log, "Not data memory");
+            stack_log << "Not data memory" << endl;
             break;
         case STACK_CANT_EXPAND:
-            fprintf(stack_log, "Size of Stack = %d \n \
-                    Stack can't expand", size_);
+            stack_log << "Size of Stack = " << size_ << endl
+                    << "Stack can't expand" << endl;
             break;
         case POP_EMPTY_STACK:
-            fprintf(stack_log, "Pop in empty stack");
+            stack_log << "Pop in empty stack" << endl;
             break;
         case NO_ENOUGH_MEMORY:
-            fprintf(stack_log, "Size of stack = %d \n \
-                    No enough memory", size_);
+            stack_log << "Size of Stack = " << size_ << endl
+                    << "No enough memory" << endl;
             break;
         case INVAL:
-            fprintf(stack_log, "Size of stack = %d \n \
-                    Head of stack = %d \n \
-                    Data of stack = %p \n", size_, head_,
-                    data_);
+            stack_log << "Size of stack = " << size_ << endl
+                    << "Head of stack = " << head_ << endl
+                    << "Data of stack = " << data_;
             break;
         default:
             break;
     }
 
+    stack_log.close();
+
 #endif
 
     return 0;
 }
+
+#endif
