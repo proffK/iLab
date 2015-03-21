@@ -77,7 +77,7 @@ int main(int argc, char* argv[]){
 int disasm(FILE* sourse, double* buffer, int buffer_size){
 	int counter = 0;
 	while (buffer[counter] != -1 && counter <= buffer_size) {
-		fprintf(sourse ,"%d) ", counter);
+		fprintf(sourse ,"%d: ", counter);
 		switch ((int) buffer[counter]) {
 			case RPUSH:
 				++counter;
@@ -86,46 +86,12 @@ int disasm(FILE* sourse, double* buffer, int buffer_size){
 				break;
 			case PUSH:
 				++counter;
-				switch ((int) buffer[counter]) {
-					case AX:
-						fprintf(sourse, "push ax\n");
-						break;
-					case BX:
-						fprintf(sourse, "push bx\n");
-						break;
-					case CX:
-						fprintf(sourse, "push cx\n");
-						break;
-					case DX:
-						fprintf(sourse, "push dx\n");
-						break;	
-					default:
-						fprintf(sourse, "Incorect argument for push");
-						return 0;
-						break;
-				}
+				fprintf(sourse, "push r%lg\n", buffer[counter]);
 				++counter;				
 				break;
 			case POP:
 				++counter;
-				switch ((int) buffer[counter]) {
-					case AX:
-						fprintf(sourse, "pop ax\n");
-						break;
-					case BX:
-						fprintf(sourse, "pop bx\n");
-						break;
-					case CX:
-						fprintf(sourse, "pop cx\n");
-						break;
-					case DX:
-						fprintf(sourse, "pop dx\n");
-						break;	
-					default:
-						fprintf(sourse, "Incorect argument for pop");
-						return 0;
-						break;
-				}
+				fprintf(sourse, "pop r%lg\n", buffer[counter]);
 				++counter;				
 				break;
 			case ADD:
