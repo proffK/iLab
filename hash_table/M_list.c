@@ -171,8 +171,10 @@ list_elem* find_elem(list* lst, elem_t found_elem, int (*cmp) (elem_t, elem_t)\
 					  , list_elem* current_elem, int direction){
 	
 	if (list_valide(lst)) {
+		
+	if (lst -> size == 0) return 0;
 						
-	int i = 0;
+	register int i = 0;
 	
 	if (direction > 0) {
 	
@@ -202,6 +204,7 @@ list_elem* find_elem(list* lst, elem_t found_elem, int (*cmp) (elem_t, elem_t)\
 		for (i = 0; i < lst -> size; ++i){
 		
 			if (!(cmp(current_elem -> data, found_elem)))
+			
 				return current_elem;
 			
 			if (current_elem -> prev == NULL) {

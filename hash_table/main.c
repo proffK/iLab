@@ -7,7 +7,7 @@
 #include <limits.h>
 #include <assert.h>
 
-const int PRIME_SIZE = 2221;
+const int PRIME_SIZE = 10937;
 
 const long MAX_FILE_SIZE = LONG_MAX;
 
@@ -23,7 +23,10 @@ unsigned int hash1(char** str);
 unsigned int hash2(char** str);
 ///Mul hash
 
-unsigned int hash3(char** str);
+unsigned int old_hash3(char* str);
+///XOR hash
+
+unsigned int hash3(char* str);
 ///XOR hash
 
 unsigned int hash4(char** str);
@@ -52,35 +55,11 @@ int main(){
 	
 	input_file = fopen("J. D. Salinger - The Catcher in the Rye - 1951.txt", "r");
 	output_file = fopen("rezult1.cvs", "w");
-	buffer_size = file_length(input_file, MAX_FILE_SIZE);
 	
+	buffer_size = file_length(input_file, MAX_FILE_SIZE);
 	buffer = word_buffer_create(input_file, buffer_size);
 	
-	hashtest(buffer, buffer_size, output_file, hash1);
-	
-	output_file = fopen("rezult2.cvs", "w");
-	
-	hashtest(buffer, buffer_size, output_file, hash2);
-	
-	output_file = fopen("rezult3.cvs", "w");
-	
 	hashtest(buffer, buffer_size, output_file, hash3);
-	
-	output_file = fopen("rezult4.cvs", "w");
-	
-	hashtest(buffer, buffer_size, output_file, hash4);
-	
-	output_file = fopen("rezult5.cvs", "w");
-	
-	hashtest(buffer, buffer_size, output_file, hash5);
-	
-	output_file = fopen("rezult6.cvs", "w");
-	
-	hashtest(buffer, buffer_size, output_file, hash6);
-	
-	output_file = fopen("rezult7.cvs", "w");
-	
-	hashtest(buffer, buffer_size, output_file, hash7);
 	 
 	free(buffer);
 	buffer = NULL;
@@ -116,18 +95,19 @@ unsigned int hash2(char** str){
 	return hash;
 }
 ///#####################################################################
-unsigned int hash3(char** str){
-	int i = 0;
-	unsigned int hash = 0;
-	int max = strlen(*str);
+unsigned int old_hash3(char* str){
 	
-	if (str != NULL) hash = (unsigned char) (*str)[0];
+	register unsigned int rezult = 0;
 	
-	for(i = 1; i < max; ++i){
-		hash = (hash << 1) ^ (unsigned char) (*str)[i];
-	}
-	
-	return hash;
+    if (*str == '\0')  return 0;
+    
+    if (*(str + 1) == '\0') return (unsigned char) *str;
+    
+    rezult = old_hash3(str + 1);
+    
+    return ((rezult << 1) | ((rezult & 1) >> (sizeof(rezult) - 1))) ^ 
+			(unsigned char)(*str);
+
 }
 ///#####################################################################
 unsigned int hash4(char** str){
@@ -215,42 +195,52 @@ char* word_buffer_create(FILE* input_file,long input_file_length){
 
 ///#####################################################################
 
-int hashtest(char* buffer, long buffer_size, FILE* output_file, \
+int hashtest(char* buffer, long buffer_size, FILE* output_file, 
 			unsigned int (*hash) (char** str)){
 				
 	hash_table* table = 0;
-	int i = 0;
+	register int i = 0, j = 1000;
 	char* tempstr = 0;
 	
 	table = hash_table_create(PRIME_SIZE);
 	
-	fprintf(output_file, "list number , list elements of sort \n");
-	
 	for (i = 0; i < buffer_size - 1; ++i){
-		
+	
 		if	(buffer[i] == '\0'){
 			
-			tempstr = buffer + i + 1;
+			tempstr = buffer + i + 1;	
 			
 			if (!(hash_table_find(table, hash, tempstr))){
 				
 				hash_table_add(table, tempstr, hash);
+				
 			
 			}
 			
 		}	
 	}
+	//clear_log();
+	//hash_table_dump(table);
+	while (j--) {
 	
-	for (i = 0; i < table -> size; ++i){
+		for (i = 0; i < buffer_size - 1; ++i){
+	
+			if	(buffer[i] == '\0'){
+			
+				tempstr = buffer + i + 1;
+			
+				hash_table_find(table, hash, tempstr);
+				
+			}	
+		}
 		
-		
-		fprintf(output_file, "%d , %d \n", i,  (table -> data[i]) -> size);
-		
+	//if (j % 100 == 0) printf("%d\n", j);
+	
 	}
 	
-	clear_log();
-	
-	hash_table_dump(table);
+	//for (i = 0; i < table -> size; ++i){
+	//	fprintf(output_file, "%d , %d \n", i, (table -> data[i]) -> size);
+	//}
 	
 	hash_table_delete(table);
 	

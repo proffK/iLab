@@ -40,13 +40,13 @@ hash_table* hash_table_create(int size){
 	
 }
 ///###########################################################
-int hash_table_add(hash_table* table, elem_t elem,unsigned  int (*hash_gen) (elem_t*)){
+int hash_table_add(hash_table* table, elem_t elem,unsigned  int (*hash_gen) (elem_t)){
 	
 	int number_list = 0;
 	
 	if (hash_table_valide(table)) {
 	
-	number_list = hash_gen(&elem) % (table -> size);
+	number_list = hash_gen(elem) % (table -> size);
 		
 	if (add_elem(table -> data[number_list], elem)){
 		
@@ -156,12 +156,12 @@ int hash_table_delete(hash_table* table){
 }
 ///###########################################################
 
-list_elem* hash_table_find(hash_table* table,unsigned  int (*hash_gen) (elem_t*), elem_t found_elem){
+list_elem* hash_table_find(hash_table* table,unsigned  int (*hash_gen) (elem_t), elem_t found_elem){
 	
 	if (hash_table_valide(table)) {
 		
 		list_elem* current_elem = 0;		
-		int current_list = hash_gen(&found_elem) % table -> size;
+		int current_list = hash_gen(found_elem) % table -> size;
 		
 		current_elem = find_elem(table -> data[current_list], found_elem, strcmp,\
 									list_tail(table -> data[current_list]), L_HEAD);
