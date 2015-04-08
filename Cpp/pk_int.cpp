@@ -2,6 +2,7 @@
 
 pk_int::pk_int()
 {
+    Проверка!!!
     this -> _number = 0;
 }
 pk_int::pk_int(int standart_int)
