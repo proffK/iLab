@@ -1,5 +1,5 @@
 CC=gcc
-CCFLAGS=-m64 -Ofast -flto -march=native -funroll-loops
+CCFLAGS=-Wall -O2
 CLEAN=rm -f *.o
 PROGRAM_NAME=hash
 
