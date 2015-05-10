@@ -390,8 +390,7 @@ node* get_paren(void){
 
 node* get_term(void){
 
-	node* nd = node_new();
-
+	node* nd = nod_dtor();
 	if (cur_tok -> type == VAR || cur_tok -> type == NUMBER ||\
 	    cur_tok -> type == STREAM || cur_tok -> type == STRING_CONSTANT){
 
